@@ -4,7 +4,7 @@ import cv2
 
 HOGSLista = []
 
-winSize = (64,64)
+winSize = (128,128)
 blockSize = (16,16)
 blockStride = (8,8)
 cellSize = (16,16)
@@ -18,14 +18,16 @@ nlevels = 64
 descriptor = cv2.HOGDescriptor(winSize,blockSize,blockStride,cellSize,nbins,derivAperture,winSigma,
                         histogramNormType,L2HysThreshold,gammaCorrection,nlevels)
 
+print("Começando a leitura")
+
 for cont in range(0, 1000):
     imagem = cv2.imread("treinamento\\train_5a_00" + "{0:03}".format(cont) + ".png")
     HOGSLista.append(descriptor.compute(imagem))
 
-HOGSArray = numpy.array(HOGSLista)
-print(HOGSArray.shape)
+print("Salvando Treinamento Z, tamanho:" + str(len(HOGSLista)))
+numpy.save("Treinamento_Z", HOGSLista)
+print("Salvo")
 
-numpy.save("Treinamento_Z", HOGSArray)
 
 HOGSLista.clear()
 
@@ -33,9 +35,9 @@ for cont in range(0, 1000):
     imagem = cv2.imread("treinamento\\train_53_00" + "{0:03}".format(cont) + ".png")
     HOGSLista.append(descriptor.compute(imagem))
 
-HOGSArray = numpy.array(HOGSLista)
-
-numpy.save("Treinamento_S", HOGSArray)
+print("Salvando Treinamento S, tamanho:" + str(len(HOGSLista)))
+numpy.save("Treinamento_S", HOGSLista)
+print("Salvo")
 
 HOGSLista.clear()
 
@@ -43,9 +45,11 @@ for cont in range(0, 1000):
     imagem = cv2.imread("treinamento\\train_58_00" + "{0:03}".format(cont) + ".png")
     HOGSLista.append(descriptor.compute(imagem))
 
-HOGSArray = numpy.array(HOGSLista)
 
-numpy.save("Treinamento_X", HOGSArray)
+print("Salvando Treinamento X, tamanho:" + str(len(HOGSLista)))
+numpy.save("Treinamento_X", HOGSLista)
+print("Salvo")
+
 
 HOGSLista.clear()
 
@@ -56,9 +60,9 @@ for cont in range(0, 300):
     imagem = cv2.imread("testes\\train_5a_01" + "{0:03}".format(cont) + ".png")
     HOGSLista.append(descriptor.compute(imagem))
 
-HOGSArray = numpy.array(HOGSLista)
-
-numpy.save("Testes_Z", HOGSArray)
+print("Salvando Testes Z, tamanho:" + str(len(HOGSLista)))
+numpy.save("Testes_Z", HOGSLista)
+print("Salvo")
 
 HOGSLista.clear()
 
@@ -66,9 +70,9 @@ for cont in range(0, 300):
     imagem = cv2.imread("testes\\train_53_01" + "{0:03}".format(cont) + ".png")
     HOGSLista.append(descriptor.compute(imagem))
 
-HOGSArray = numpy.array(HOGSLista)
-
-numpy.save("Testes_S", HOGSArray)
+print("Salvando Testes S, tamanho:" + str(len(HOGSLista)))
+numpy.save("Testes_S", HOGSLista)
+print("Salvo")
 
 HOGSLista.clear()
 
@@ -76,6 +80,6 @@ for cont in range(0, 300):
     imagem = cv2.imread("testes\\train_58_01" + "{0:03}".format(cont) + ".png")
     HOGSLista.append(descriptor.compute(imagem))
 
-HOGSArray = numpy.array(HOGSLista)
-
-numpy.save("Testes_X", HOGSArray)
+print("Salvando Testes X, tamanho:" + str(len(HOGSLista)))
+numpy.save("Testes_X", HOGSLista)
+print("Salvo")
