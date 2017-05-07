@@ -1,3 +1,4 @@
+# coding=utf-8
 import numpy
 from sklearn.neural_network import MLPClassifier
 
