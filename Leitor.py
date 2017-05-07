@@ -1,3 +1,4 @@
+# coding=utf-8
 import numpy
 import cv2
 
@@ -29,7 +30,7 @@ numpy.save("Treinamento_Z", HOGSLista)
 print("Salvo")
 
 
-HOGSLista.clear()
+del HOGSLista[:]
 
 for cont in range(0, 1000):
     imagem = cv2.imread("treinamento\\train_53_00" + "{0:03}".format(cont) + ".png")
@@ -39,7 +40,7 @@ print("Salvando Treinamento S, tamanho:" + str(len(HOGSLista)))
 numpy.save("Treinamento_S", HOGSLista)
 print("Salvo")
 
-HOGSLista.clear()
+del HOGSLista[:]
 
 for cont in range(0, 1000):
     imagem = cv2.imread("treinamento\\train_58_00" + "{0:03}".format(cont) + ".png")
@@ -51,7 +52,7 @@ numpy.save("Treinamento_X", HOGSLista)
 print("Salvo")
 
 
-HOGSLista.clear()
+del HOGSLista[:]
 
 #Testes
 
@@ -64,7 +65,7 @@ print("Salvando Testes Z, tamanho:" + str(len(HOGSLista)))
 numpy.save("Testes_Z", HOGSLista)
 print("Salvo")
 
-HOGSLista.clear()
+del HOGSLista[:]
 
 for cont in range(0, 300):
     imagem = cv2.imread("testes\\train_53_01" + "{0:03}".format(cont) + ".png")
@@ -74,7 +75,7 @@ print("Salvando Testes S, tamanho:" + str(len(HOGSLista)))
 numpy.save("Testes_S", HOGSLista)
 print("Salvo")
 
-HOGSLista.clear()
+del HOGSLista[:]
 
 for cont in range(0, 300):
     imagem = cv2.imread("testes\\train_58_01" + "{0:03}".format(cont) + ".png")
@@ -83,3 +84,5 @@ for cont in range(0, 300):
 print("Salvando Testes X, tamanho:" + str(len(HOGSLista)))
 numpy.save("Testes_X", HOGSLista)
 print("Salvo")
+
+del HOGSLista[:]

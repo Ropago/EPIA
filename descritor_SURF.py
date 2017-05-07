@@ -27,7 +27,7 @@ color – Color of keypoints.
 flags – Flags setting drawing features. Possible flags bit values are defined by DrawMatchesFlags. See details above in drawMatches() .
 '''
 surf = cv2.SURF(400)
-surf.extended = False #pra img ser 64 como no descritor HOG no momento. true para 128
+surf.extended = True #pra img ser 64 como no descritor HOG no momento. true para 128
 
 # pensar sobre a orientação. É necessário?
 # surf.upright = True
@@ -39,17 +39,12 @@ for cont in range(0, 1000):
     imagem = cv2.imread("treinamento\\train_5a_00" + "{0:03}".format(cont) + ".png", 0)
     # acha os descritores e os pontos chave
     ponto_chave, descritor = surf.detectAndCompute(imagem, None)
-    # adiciona os pontos chave na SURFlista
-    SURFlista.append(ponto_chave)
-    # precisamos serializar os pontos chave dos dados
-    index = []
-    for point in ponto_chave:
-        temp = (point.pt, point.size, point.angle, point.response, point.octave,
-            point.class_id)
-        index.append(temp)
+    # adiciona o descritor na SURFlista
+    SURFlista.append(descritor)
 
-SURFArray = index
-numpy.save("Treinamento_sZ", SURFArray)
+print("Salvando descritor Treinamento surf-Z, tamanho:" + str(len(SURFlista)))
+numpy.save("Treinamento_surf-Z", SURFlista)
+print("Salvo")
 del SURFlista[:]
 
 
@@ -60,19 +55,13 @@ for cont in range(0, 1000):
     imagem = cv2.imread("treinamento\\train_53_00" + "{0:03}".format(cont) + ".png")
     # acha os descritores e os pontos chave
     ponto_chave, descritor = surf.detectAndCompute(imagem, None)
-    # adiciona os pontos chave na SURFlista
-    SURFlista.append(ponto_chave)
-    # precisamos serializar os pontos chave dos dados
-    index = []
-    for point in ponto_chave:
-        temp = (point.pt, point.size, point.angle, point.response, point.octave,
-            point.class_id)
-        index.append(temp)
+    # adiciona o descritor na SURFlista
+    SURFlista.append(descritor)
 
-SURFArray = index
-numpy.save("Treinamento_sS", SURFArray)
+print("Salvando descritor Treinamento surf-S, tamanho:" + str(len(SURFlista)))
+numpy.save("Treinamento_surf-S", SURFlista)
+print("Salvo")
 del SURFlista[:]
-
 
 
 
@@ -82,17 +71,12 @@ for cont in range(0, 1000):
     imagem = cv2.imread("treinamento\\train_58_00" + "{0:03}".format(cont) + ".png")
     # acha os descritores e os pontos chave
     ponto_chave, descritor = surf.detectAndCompute(imagem, None)
-    # adiciona os pontos chave na SURFlista
-    SURFlista.append(ponto_chave)
-    # precisamos serializar os pontos chave dos dados
-    index = []
-    for point in ponto_chave:
-        temp = (point.pt, point.size, point.angle, point.response, point.octave,
-            point.class_id)
-        index.append(temp)
+    # adiciona o descritor na SURFlista
+    SURFlista.append(descritor)
 
-SURFArray = index
-numpy.save("Treinamento_sX", SURFArray)
+print("Salvando descritor Treinamento surf-X, tamanho:" + str(len(SURFlista)))
+numpy.save("Treinamento_surf-X", SURFlista)
+print("Salvo")
 del SURFlista[:]
 
 
@@ -102,63 +86,48 @@ del SURFlista[:]
 # Testes
 
 
-for cont in range(0, 1000):
+
+for cont in range(0, 300):
     # montamos a imagem
     imagem = cv2.imread("testes\\train_5a_01" + "{0:03}".format(cont) + ".png")
     # acha os descritores e os pontos chave
-    ponto_chave, descritor = surf.detectAndCompute(imagem, )
-    # adiciona os pontos chave na SURFlista
-    SURFlista.append(ponto_chave)
-    # precisamos serializar os pontos chave dos dados
-    index = []
-    for point in ponto_chave:
-        temp = (point.pt, point.size, point.angle, point.response, point.octave,
-            point.class_id)
-        index.append(temp)
+    ponto_chave, descritor = surf.detectAndCompute(imagem, None)
+    # adiciona o descritor na SURFlista
+    SURFlista.append(descritor)
 
-SURFArray = index
-numpy.save("Testes_sZ", SURFArray)
+print("Salvando descritor Testes surf-Z, tamanho:" + str(len(SURFlista)))
+numpy.save("Testes_surf-Z", SURFlista)
+print("Salvo")
 del SURFlista[:]
 
 
 
 
-for cont in range(0, 1000):
+
+for cont in range(0, 300):
     # montamos a imagem
     imagem = cv2.imread("testes\\train_53_01" + "{0:03}".format(cont) + ".png")
     # acha os descritores e os pontos chave
     ponto_chave, descritor = surf.detectAndCompute(imagem, None)
-    # adiciona os pontos chave na SURFlista
-    SURFlista.append(ponto_chave)
-    # precisamos serializar os pontos chave dos dados
-    index = []
-    for point in ponto_chave:
-        temp = (point.pt, point.size, point.angle, point.response, point.octave,
-            point.class_id)
-        index.append(temp)
+    # adiciona o descritor na SURFlista
+    SURFlista.append(descritor)
 
-SURFArray = index
-numpy.save("Testes_sS", SURFArray)
+print("Salvando descritor Testes surf-S, tamanho:" + str(len(SURFlista)))
+numpy.save("Testes_surf-S", SURFlista)
+print("Salvo")
 del SURFlista[:]
 
 
 
-
-
-for cont in range(0, 1000):
+for cont in range(0, 300):
     # montamos a imagem
     imagem = cv2.imread("testes\\train_58_01" + "{0:03}".format(cont) + ".png")
     # acha os descritores e os pontos chave
     ponto_chave, descritor = surf.detectAndCompute(imagem, None)
-    # adiciona os pontos chave na SURFlista
-    SURFlista.append(ponto_chave)
-    # precisamos serializar os pontos chave dos dados
-    index = []
-    for point in ponto_chave:
-        temp = (point.pt, point.size, point.angle, point.response, point.octave,
-            point.class_id)
-        index.append(temp)
+    # adiciona o descritor na SURFlista
+    SURFlista.append(descritor)
 
-SURFArray = index
-numpy.save("Testes_sX", SURFArray)
+print("Salvando descritor Testes surf-X, tamanho:" + str(len(SURFlista)))
+numpy.save("Testes_surf-X", SURFlista)
+print("Salvo")
 del SURFlista[:]
