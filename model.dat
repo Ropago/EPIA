@@ -31,7 +31,7 @@ p12
 F0.1
 sS'activation'
 p13
-S'relu'
+S'logistic'
 p14
 sS'momentum'
 p15
@@ -44,7 +44,7 @@ p17
 F1e-08
 sS'learning_rate'
 p18
-S'adaptive'
+S'adaptative'
 p19
 sS'max_iter'
 p20
@@ -74,7 +74,7 @@ p29
 I01
 sS'solver'
 p30
-S'lbfgs'
+S'adam'
 p31
 sS'hidden_layer_sizes'
 p32

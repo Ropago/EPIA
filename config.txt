@@ -1,0 +1,2 @@
+SURF (descritor) 
+ hessianThreshold : 400, nOctaves: 4, nOctaveLayers: 2, extended: True, upright: True

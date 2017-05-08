@@ -26,8 +26,22 @@ outImage – Output image. Its content depends on the flags value defining what 
 color – Color of keypoints.
 flags – Flags setting drawing features. Possible flags bit values are defined by DrawMatchesFlags. See details above in drawMatches() .
 '''
-surf = cv2.SurfFeatureDetector (400)
-surf.extended = True #pra img ser 64 como no descritor HOG no momento. true para 128
+
+hessianThreshold = 400
+nOctaves = 4
+nOctaveLayers = 2
+extended = True
+upright = True
+
+surf = cv2.SURF(hessianThreshold, nOctaves, nOctaveLayers, extended, upright)
+
+# inclui no config.txt
+configtxt = ("SURF (descritor) \n hessianThreshold : %s, nOctaves: %s, nOctaveLayers: %s, extended: %s, upright: %s" %
+             (hessianThreshold, nOctaves, nOctaveLayers, extended, upright))
+
+file = open("config.txt", "w")
+file.write(configtxt)
+file.close()
 
 # pensar sobre a orientação. É necessário?
 # surf.upright = True
