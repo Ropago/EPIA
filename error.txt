@@ -1,0 +1,15 @@
+epoca 1; 
+TREINO: 2400 | TESTE: 600;
+Erro medio treinamento 1.0
+epoca 2; 
+TREINO: 2400 | TESTE: 600;
+Erro medio treinamento 1.0
+epoca 3; 
+TREINO: 2400 | TESTE: 600;
+Erro medio treinamento 1.0
+epoca 4; 
+TREINO: 2400 | TESTE: 600;
+Erro medio treinamento 1.0
+epoca 5; 
+TREINO: 2400 | TESTE: 600;
+Erro medio treinamento 1.0
