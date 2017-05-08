@@ -7,7 +7,7 @@ HOGSLista = []
 
 winSize = (128,128)
 blockSize = (16,16)
-blockStride = (8,8)
+blockStride = (16,16)
 cellSize = (16,16)
 nbins = 9
 derivAperture = 1

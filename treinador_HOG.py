@@ -18,6 +18,7 @@ print("Lendo arquivos de Treinamento Z. Tamanho: " + str(len(HOGZ)))
 entradas = []
 respostas = []
 errortxt = []
+configtxt = []
 
 
 MLPClassifier
@@ -47,13 +48,14 @@ rede = MLPClassifier(hidden_layer_sizes, activation, solver, alpha, batch_size, 
                      max_iter, shuffle, random_state, tol, verbose, warm_start, momentum, nesterovs_momentum,
                      early_stopping, validation_fraction, beta_1, beta_2, epsilon)
 
-
+configtxt.append("\nExecucao em " + time.strftime("%d/%m/%Y") + " " + time.strftime("%H:%M:%S"))
+errortxt.append("\nExecucao em " + time.strftime("%d/%m/%Y") + " " + time.strftime("%H:%M:%S"))
 
 # gera o model.dat
 pickle.dump(rede, open( "model.dat", "wb" ))
 
 # adiciona ao config.txt
-configtxt = ("\n MLPClassifier \n hidden_layer_sizes : %s\n activation : %s\n solver : %s\n alpha : %s\n batch_size : %s\n"
+configtxt.append("\n MLPClassifier \n hidden_layer_sizes : %s\n activation : %s\n solver : %s\n alpha : %s\n batch_size : %s\n"
                  " learning_rate : %s\n learning_rate_init : %s\n power_t : %s\n max_iter : %s\n shuffle : %s\n "
                  "random_state : %s\n tol : %s\n verbose : %s\n warm_start : %s\n momentum : %s\n nesterovs_momentum : %s\n"
                   "early_stopping : %s\n validation_fraction : %s\n beta_1 : %s\n beta_2 : %s\n epsilon : %s" %
@@ -64,7 +66,8 @@ configtxt = ("\n MLPClassifier \n hidden_layer_sizes : %s\n activation : %s\n so
                     str(validation_fraction), str(beta_1), str(beta_2), str(epsilon)))
 
 with open("config.txt", "a") as myfile:
-    myfile.write(configtxt)
+    for item in configtxt:
+        myfile.write(item)
 myfile.close()
 
 print("Unificando as listas de Treinamento...")
