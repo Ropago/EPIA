@@ -19,6 +19,15 @@ nlevels = 64
 descriptor = cv2.HOGDescriptor(winSize,blockSize,blockStride,cellSize,nbins,derivAperture,winSigma,
                         histogramNormType,L2HysThreshold,gammaCorrection,nlevels)
 
+# insere os parametros no arquivo config.txt
+configtxt = ("\nHOG (descritor) \n winSize: %s,blockSize: %s,blockStride: %s,cellSize: %s,nbins: %s,derivAperture: %s,winSigma: %s,"
+             " histogramNormType: %s, L2HysThreshold: %s,gammaCorrection: %s,nlevels: %s" % (winSize,blockSize,blockStride,
+             cellSize, nbins, derivAperture, winSigma,histogramNormType,L2HysThreshold,gammaCorrection,nlevels))
+
+with open("config.txt", "a") as myfile:
+    myfile.write(configtxt)
+myfile.close()
+
 print("Começando a leitura")
 
 for cont in range(0, 1000):

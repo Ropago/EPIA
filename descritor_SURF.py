@@ -36,12 +36,12 @@ upright = True
 surf = cv2.SURF(hessianThreshold, nOctaves, nOctaveLayers, extended, upright)
 
 # inclui no config.txt
-configtxt = ("SURF (descritor) \n hessianThreshold : %s, nOctaves: %s, nOctaveLayers: %s, extended: %s, upright: %s" %
+configtxt = ("\nSURF (descritor) \n hessianThreshold : %s, nOctaves: %s, nOctaveLayers: %s, extended: %s, upright: %s" %
              (hessianThreshold, nOctaves, nOctaveLayers, extended, upright))
 
-file = open("config.txt", "w")
-file.write(configtxt)
-file.close()
+with open("config.txt", "a") as myfile:
+    myfile.write(configtxt)
+myfile.close()
 
 # pensar sobre a orientação. É necessário?
 # surf.upright = True

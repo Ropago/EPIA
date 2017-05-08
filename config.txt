@@ -1,2 +1,5 @@
+
 SURF (descritor) 
  hessianThreshold : 400, nOctaves: 4, nOctaveLayers: 2, extended: True, upright: True
+HOG (descritor) 
+ winSize: (128, 128),blockSize: (16, 16),blockStride: (8, 8),cellSize: (16, 16),nbins: 9,derivAperture: 1,winSigma: -1, histogramNormType: 0, L2HysThreshold: 0.2,gammaCorrection: 1,nlevels: 64

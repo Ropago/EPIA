@@ -52,6 +52,21 @@ rede = MLPClassifier(hidden_layer_sizes, activation, solver, alpha, batch_size, 
 # gera o model.dat
 pickle.dump(rede, open( "model.dat", "wb" ))
 
+# adiciona ao config.txt
+configtxt = ("\n MLPClassifier \n hidden_layer_sizes : %s, activation : %s, solver : %s, alpha : %s, batch_size : %s,"
+                 " learning_rate : %s, learning_rate_init : %s, power_t : %s, max_iter : %s, shuffle : %s, "
+                 "random_state : %s, tol : %s, verbose : %s, warm_start : %s, momentum : %s, nesterovs_momentum : %s,"
+                  "early_stopping : %s, validation_fraction : %s, beta_1 : %s, beta_2 : %s, epsilon : %s" %
+
+                 (str(hidden_layer_sizes), str(activation), str(solver), str(alpha), str(batch_size),str(learning_rate),
+                    str(learning_rate_init), str(power_t), str(max_iter), str(shuffle), str(random_state), str(tol),
+                    str(verbose), str(warm_start), str(momentum), str(nesterovs_momentum),str(early_stopping),
+                    str(validation_fraction), str(beta_1), str(beta_2), str(epsilon)))
+
+with open("config.txt", "a") as myfile:
+    myfile.write(configtxt)
+myfile.close()
+
 print("Unificando as listas de Treinamento...")
 for ent in HOGS:
     entradas.append(ent)
@@ -93,7 +108,7 @@ TempoInicio = time.time()
 
 
 # K FOLD CROSS
-k_fold = KFold(n_splits= 5, random_state=None, shuffle=False)
+k_fold = KFold(n_splits= 5, random_state=None, shuffle=True)
 epoca = 1
 
 for idTreino, idTeste in k_fold.split(ArrayCorrigida):
@@ -141,16 +156,3 @@ file.close()
 
 
 
-configtxt = (" MLPClassifier \nhidden_layer_sizes : %s, activation : %s, solver : %s, alpha : %s, batch_size : %s,"
-                 " learning_rate : %s, learning_rate_init : %s, power_t : %s, max_iter : %s, shuffle : %s, "
-                 "random_state : %s, tol : %s, verbose : %s, warm_start : %s, momentum : %s, nesterovs_momentum : %s,"
-                  "early_stopping : %s, validation_fraction : %s, beta_1 : %s, beta_2 : %s, epsilon : %s" %
-
-                 (str(hidden_layer_sizes), str(activation), str(solver), str(alpha), str(batch_size),str(learning_rate),
-                    str(learning_rate_init), str(power_t), str(max_iter), str(shuffle), str(random_state), str(tol),
-                    str(verbose), str(warm_start), str(momentum), str(nesterovs_momentum),str(early_stopping),
-                    str(validation_fraction), str(beta_1), str(beta_2), str(epsilon)))
-
-file = open("config.txt", "w")
-file.write(configtxt)
-file.close()
