@@ -44,7 +44,7 @@ p17
 F1e-08
 sS'learning_rate'
 p18
-S'adaptative'
+S'adaptive'
 p19
 sS'max_iter'
 p20
@@ -78,7 +78,7 @@ S'adam'
 p31
 sS'hidden_layer_sizes'
 p32
-I1000
+I500
 sS'power_t'
 p33
 F0.5

@@ -21,12 +21,12 @@ errortxt = []
 
 
 MLPClassifier
-hidden_layer_sizes=(1000)
+hidden_layer_sizes=(500)
 activation='logistic' #sigmoid
 solver='adam'
 alpha=1e-5
 batch_size='auto'
-learning_rate='adaptative'
+learning_rate='adaptive'
 learning_rate_init=0.001
 power_t=0.5
 max_iter=200
