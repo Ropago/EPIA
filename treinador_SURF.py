@@ -41,13 +41,15 @@ for item in treinaX:
 print("Tamanho da lista de Treinamento: " + str(len(entradas)))
 print("Tamanho da lista de respostas: " + str(len(respostas)))
 
+
+
 print("Corrigindo dimensao da lista de entradas...")
-EntradasArray = numpy.array(entradas)
-entradas = EntradasArray.reshape(len(EntradasArray), -1)
+entradas = numpy.array(entradas)
+entradas = entradas.reshape(len(entradas), -1)
 
 respostas = numpy.array(respostas)
-respostas = respostas.reshape(len(respostas), -1)
 print("Pronto")
+
 
 print("Iniciando Treinamento da rede...")
 TempoInicio = time.time()
@@ -68,14 +70,15 @@ for idTreino, idTeste in k_fold.split(entradas):
     entrada_treino, entrada_teste = entradas[idTreino], entradas[idTeste]
     resposta_treino, resposta_teste = respostas[idTreino], respostas[idTeste]
 
+    print "shape 1: %s  shape 2: %s" % (entrada_treino.shape, resposta_treino.shape)
+
     # treina a rede
-
-    print("\n Converte as entradas da rede")
-    resposta_treino = numpy.array(resposta_treino)
-
     print("\n Treina a rede")
     rede.fit(entrada_treino, resposta_treino)
 
+    # faz a previsão
+    print " -> fazendo previsão"
+    prediz = rede.predict(entrada_teste)
 
 
 # cuida do tempo

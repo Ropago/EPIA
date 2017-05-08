@@ -26,7 +26,7 @@ outImage – Output image. Its content depends on the flags value defining what 
 color – Color of keypoints.
 flags – Flags setting drawing features. Possible flags bit values are defined by DrawMatchesFlags. See details above in drawMatches() .
 '''
-surf = cv2.SURF(400)
+surf = cv2.SurfFeatureDetector (400)
 surf.extended = True #pra img ser 64 como no descritor HOG no momento. true para 128
 
 # pensar sobre a orientação. É necessário?
