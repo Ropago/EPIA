@@ -1,6 +1,6 @@
 # coding=utf-8
 import cv2
-import cPickle
+#import cPickle
 import numpy
 
 ''' Explicação mais detalhada:

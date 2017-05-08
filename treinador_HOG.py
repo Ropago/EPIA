@@ -53,10 +53,10 @@ rede = MLPClassifier(hidden_layer_sizes, activation, solver, alpha, batch_size, 
 pickle.dump(rede, open( "model.dat", "wb" ))
 
 # adiciona ao config.txt
-configtxt = ("\n MLPClassifier \n hidden_layer_sizes : %s, activation : %s, solver : %s, alpha : %s, batch_size : %s,"
-                 " learning_rate : %s, learning_rate_init : %s, power_t : %s, max_iter : %s, shuffle : %s, "
-                 "random_state : %s, tol : %s, verbose : %s, warm_start : %s, momentum : %s, nesterovs_momentum : %s,"
-                  "early_stopping : %s, validation_fraction : %s, beta_1 : %s, beta_2 : %s, epsilon : %s" %
+configtxt = ("\n MLPClassifier \n hidden_layer_sizes : %s\n activation : %s\n solver : %s\n alpha : %s\n batch_size : %s\n"
+                 " learning_rate : %s\n learning_rate_init : %s\n power_t : %s\n max_iter : %s\n shuffle : %s\n "
+                 "random_state : %s\n tol : %s\n verbose : %s\n warm_start : %s\n momentum : %s\n nesterovs_momentum : %s\n"
+                  "early_stopping : %s\n validation_fraction : %s\n beta_1 : %s\n beta_2 : %s\n epsilon : %s" %
 
                  (str(hidden_layer_sizes), str(activation), str(solver), str(alpha), str(batch_size),str(learning_rate),
                     str(learning_rate_init), str(power_t), str(max_iter), str(shuffle), str(random_state), str(tol),
@@ -100,7 +100,7 @@ print("Pronto")
 # treinamento
 
 
-
+from sklearn.metrics import accuracy_score
 
 print("Iniciando Treinamento da rede...")
 
@@ -109,31 +109,34 @@ TempoInicio = time.time()
 
 # K FOLD CROSS
 k_fold = KFold(n_splits= 5, random_state=None, shuffle=True)
-epoca = 1
+epoca = 0
 
 for idTreino, idTeste in k_fold.split(ArrayCorrigida):
-    print " -> rodando epoca: ", epoca
+    print (" -> rodando epoca: ", epoca)
 
     # seleciona datasets unicos para treinar e testar
     entrada_treino, entrada_teste = ArrayCorrigida[idTreino], ArrayCorrigida[idTeste]
     resposta_treino, resposta_teste = respostas[idTreino], respostas[idTeste]
 
-    print "shape 1: %s  shape 2: %s" % (entrada_treino, resposta_treino)
+    print ("shape 1: %s  shape 2: %s" % (entrada_treino, resposta_treino))
 
-    print " -> treinando a rede"
+    print ("Tamanhos:\nEntrada: %s\nRespostas: %s" % (str(len(entrada_treino)), str(len(resposta_treino))))
+
+    print (" -> treinando a rede")
     # treina rede
     rede.fit(entrada_treino, resposta_treino)
 
-    print " -> fazendo previsão"
+    print (" -> fazendo previsão")
     prediz = rede.predict(entrada_teste)
 
-    print "Erro medio ", rede.score(entrada_treino, resposta_treino)
+    print (" -> rodando o treinamento para pegar o erro")
+    retesta = rede.predict(entrada_treino)
+
+    print ("Erro medio ", 1 - accuracy_score(resposta_teste, prediz))
 
 
     # salva info no array de error.txt
-    errortxt.append("epoca %i; " % epoca)
-    errortxt.append("TREINO: %s | TESTE: %s;" % ((str(len(idTreino)), str(len(idTeste)))))
-    errortxt.append("Erro medio treinamento %s" % str(rede.score(entrada_treino, resposta_treino)))
+    errortxt.append(str(epoca) + ";" + str(1 - accuracy_score(resposta_treino, retesta)) + ";" + str(1 - accuracy_score(resposta_teste, prediz)))
 
     # atualiza epoca
     epoca = epoca + 1
@@ -142,9 +145,9 @@ TempoFim = time.time()
 
 from sklearn.metrics import classification_report, confusion_matrix
 
-print "\n MATRIZ DE CONFUSAO"
-print confusion_matrix(resposta_teste, prediz)
-print "\n CLASSIFICACAO"
+print ("\n MATRIZ DE CONFUSAO")
+print (confusion_matrix(resposta_teste, prediz))
+print ("\n CLASSIFICACAO")
 print(classification_report(resposta_teste, prediz))
 
 print("Rede treinada em " + str(TempoFim - TempoInicio) + " segundos")

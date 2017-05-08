@@ -12,7 +12,7 @@ import time
 import pickle
 
 # carrega arquivo treinamento
-treinaZ = numpy.load("Treinamento_surf-Z.npy")
+treinaZ = numpy.load("Treinamento_surf-Z.npy", encoding="utf-8")
 print("Lendo arquivos de Treinamento Z. Tamanho: " + str(len(treinaZ)))
 
 # carrega arquivo treinamento
@@ -115,14 +115,14 @@ for idTreino, idTeste in k_fold.split(entradas):
     entrada_treino, entrada_teste = entradas[idTreino], entradas[idTeste]
     resposta_treino, resposta_teste = respostas[idTreino], respostas[idTeste]
 
-    print "shape 1: %s  shape 2: %s" % (entrada_treino.shape, resposta_treino.shape)
+    print ("shape 1: %s  shape 2: %s" % (entrada_treino.shape, resposta_treino.shape))
 
     # treina a rede
     print("\n Treina a rede")
     rede.fit(entrada_treino, resposta_treino)
 
     # faz a previsão
-    print " -> fazendo previsão"
+    print (" -> fazendo previsão")
     prediz = rede.predict(entrada_teste)
 
 
