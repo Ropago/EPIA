@@ -20,8 +20,9 @@ descriptor = cv2.HOGDescriptor(winSize,blockSize,blockStride,cellSize,nbins,deri
                         histogramNormType,L2HysThreshold,gammaCorrection,nlevels)
 
 # insere os parametros no arquivo config.txt
-configtxt = ("\nHOG (descritor) \n winSize: %s,blockSize: %s,blockStride: %s,cellSize: %s,nbins: %s,derivAperture: %s,winSigma: %s,"
-             " histogramNormType: %s, L2HysThreshold: %s,gammaCorrection: %s,nlevels: %s" % (winSize,blockSize,blockStride,
+configtxt = ("\n\nHOG (descritor) \nwinSize: %s \nblockSize: %s \nblockStride: %s \ncellSize: %s \nnbins: %s \n"
+             "derivAperture: %s \nwinSigma: %s \nhistogramNormType: %s \nL2HysThreshold: %s \ngammaCorrection: %s \n"
+             "nlevels: %s" % (winSize,blockSize,blockStride,
              cellSize, nbins, derivAperture, winSigma,histogramNormType,L2HysThreshold,gammaCorrection,nlevels))
 
 with open("config.txt", "a") as myfile:

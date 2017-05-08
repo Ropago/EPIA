@@ -36,7 +36,7 @@ upright = True
 surf = cv2.SURF(hessianThreshold, nOctaves, nOctaveLayers, extended, upright)
 
 # inclui no config.txt
-configtxt = ("\nSURF (descritor) \n hessianThreshold : %s, nOctaves: %s, nOctaveLayers: %s, extended: %s, upright: %s" %
+configtxt = ("\n\nSURF (descritor) \nhessianThreshold : %s \nnOctaves: %s \nnOctaveLayers: %s \nextended: %s \nupright: %s" %
              (hessianThreshold, nOctaves, nOctaveLayers, extended, upright))
 
 with open("config.txt", "a") as myfile:

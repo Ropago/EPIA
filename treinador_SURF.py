@@ -9,6 +9,7 @@ import numpy
 from sklearn.model_selection import KFold
 from sklearn.neural_network import MLPClassifier
 import time
+import pickle
 
 # carrega arquivo treinamento
 treinaZ = numpy.load("Treinamento_surf-Z.npy")
@@ -38,6 +39,55 @@ for item in treinaX:
     respostas.extend("X")
 
 
+
+
+
+hidden_layer_sizes=(500)
+activation='logistic' #sigmoid
+solver='adam'
+alpha=1e-5
+batch_size='auto'
+learning_rate='adaptive'
+learning_rate_init=0.001
+power_t=0.5
+max_iter=200
+shuffle=True
+random_state=1
+tol=0.0001
+verbose=False
+warm_start=False
+momentum=0.9
+nesterovs_momentum=True
+early_stopping=False
+validation_fraction=0.1
+beta_1=0.9
+beta_2=0.999
+epsilon=1e-08
+
+rede = MLPClassifier(hidden_layer_sizes, activation, solver, alpha, batch_size, learning_rate, learning_rate_init, power_t,
+                     max_iter, shuffle, random_state, tol, verbose, warm_start, momentum, nesterovs_momentum,
+                     early_stopping, validation_fraction, beta_1, beta_2, epsilon)
+
+
+
+# gera o model.dat
+pickle.dump(rede, open( "model.dat", "wb" ))
+
+# adiciona ao config.txt
+configtxt = ("\n\nMLPClassifier (SURF) \nhidden_layer_sizes : %s \nactivation : %s \nsolver : %s \nalpha : %s \nbatch_size : %s \n"
+                 " learning_rate : %s \nlearning_rate_init : %s \npower_t : %s \nmax_iter : %s \nshuffle : %s \n"
+                 "random_state : %s \ntol : %s \nverbose : %s \nwarm_start : %s \nmomentum : %s \nnesterovs_momentum : %s \n"
+                  "early_stopping : %s \nvalidation_fraction : %s \nbeta_1 : %s \nbeta_2 : %s \nepsilon : %s" %
+
+                 (str(hidden_layer_sizes), str(activation), str(solver), str(alpha), str(batch_size),str(learning_rate),
+                    str(learning_rate_init), str(power_t), str(max_iter), str(shuffle), str(random_state), str(tol),
+                    str(verbose), str(warm_start), str(momentum), str(nesterovs_momentum),str(early_stopping),
+                    str(validation_fraction), str(beta_1), str(beta_2), str(epsilon)))
+
+with open("config.txt", "a") as myfile:
+    myfile.write(configtxt)
+myfile.close()
+
 print("Tamanho da lista de Treinamento: " + str(len(entradas)))
 print("Tamanho da lista de respostas: " + str(len(respostas)))
 
@@ -53,11 +103,6 @@ print("Pronto")
 
 print("Iniciando Treinamento da rede...")
 TempoInicio = time.time()
-
-# modela a rede
-rede = MLPClassifier(solver='lbfgs', alpha=1e-5, hidden_layer_sizes=(1000), random_state=1,
-                     learning_rate='adaptive', max_iter=200)
-
 
 # cria o kFold Validation com 5 partições. Shuffle ou não?
 k_fold = KFold(n_splits= 5, random_state=None, shuffle=False)
