@@ -1,14 +1,15 @@
 # coding=utf-8
 import numpy
 import cv2
+import time
 
 
 HOGSLista = []
 
 winSize = (128,128)
 blockSize = (16,16)
-blockStride = (16,16)
-cellSize = (16,16)
+blockStride = (8,8)
+cellSize = (8,8)
 nbins = 9
 derivAperture = 1
 winSigma = -1
@@ -19,6 +20,8 @@ nlevels = 64
 descriptor = cv2.HOGDescriptor(winSize,blockSize,blockStride,cellSize,nbins,derivAperture,winSigma,
                         histogramNormType,L2HysThreshold,gammaCorrection,nlevels)
 
+configtxtdata = ("\nExecucao em " + time.strftime("%d/%m/%Y") + " " + time.strftime("%H:%M"))
+
 # insere os parametros no arquivo config.txt
 configtxt = ("\n\nHOG (descritor) \nwinSize: %s \nblockSize: %s \nblockStride: %s \ncellSize: %s \nnbins: %s \n"
              "derivAperture: %s \nwinSigma: %s \nhistogramNormType: %s \nL2HysThreshold: %s \ngammaCorrection: %s \n"
@@ -26,6 +29,7 @@ configtxt = ("\n\nHOG (descritor) \nwinSize: %s \nblockSize: %s \nblockStride: %
              cellSize, nbins, derivAperture, winSigma,histogramNormType,L2HysThreshold,gammaCorrection,nlevels))
 
 with open("config.txt", "a") as myfile:
+    myfile.write(configtxtdata)
     myfile.write(configtxt)
 myfile.close()
 

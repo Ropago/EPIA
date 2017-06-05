@@ -48,11 +48,8 @@ rede = MLPClassifier(hidden_layer_sizes, activation, solver, alpha, batch_size, 
                      max_iter, shuffle, random_state, tol, verbose, warm_start, momentum, nesterovs_momentum,
                      early_stopping, validation_fraction, beta_1, beta_2, epsilon)
 
-configtxt.append("\nExecucao em " + time.strftime("%d/%m/%Y") + " " + time.strftime("%H:%M:%S"))
-errortxt.append("\nExecucao em " + time.strftime("%d/%m/%Y") + " " + time.strftime("%H:%M:%S"))
+errortxt.append("\nExecucao em " + time.strftime("%d/%m/%Y") + " " + time.strftime("%H:%M"))
 
-# gera o model.dat
-pickle.dump(rede, open( "model.dat", "wb" ))
 
 # adiciona ao config.txt
 configtxt.append("\n MLPClassifier \n hidden_layer_sizes : %s\n activation : %s\n solver : %s\n alpha : %s\n batch_size : %s\n"
@@ -135,14 +132,17 @@ for idTreino, idTeste in k_fold.split(ArrayCorrigida):
     print (" -> rodando o treinamento para pegar o erro")
     retesta = rede.predict(entrada_treino)
 
-    print ("Erro medio ", 1 - accuracy_score(resposta_teste, prediz))
+    print ("Erro medio ", 1 - rede.score(entrada_treino, resposta_treino))
 
 
     # salva info no array de error.txt
-    errortxt.append(str(epoca) + ";" + str(1 - accuracy_score(resposta_treino, retesta)) + ";" + str(1 - accuracy_score(resposta_teste, prediz)))
+    errortxt.append(str(epoca) + ";" + str(1 - rede.score(entrada_treino, resposta_treino)) + ";" + str(1 - rede.score(entrada_teste, resposta_teste)))
 
     # atualiza epoca
     epoca = epoca + 1
+
+# gera o model.dat
+pickle.dump(rede, open( "model.dat", "wb" ))
 
 TempoFim = time.time()
 
