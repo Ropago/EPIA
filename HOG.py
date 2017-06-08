@@ -5,6 +5,7 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import accuracy_score
 import pickle
 from sklearn.model_selection import KFold
+from LabelLetra import LabelLetra
 
 
 def leitor():
@@ -13,7 +14,7 @@ def leitor():
 
     winSize = (128, 128)
     blockSize = (16, 16)
-    blockStride = (8, 8)
+    blockStride = (16, 16)
     cellSize = (8, 8)
     nbins = 9
     derivAperture = 1
@@ -41,71 +42,117 @@ def leitor():
 
     print("Começando a leitura")
 
-    for cont in range(0, 1000):
-        imagem = cv2.imread("treinamento\\train_5a_00" + "{0:03}".format(cont) + ".png")
-        HOGSLista.append(descriptor.compute(imagem))
+    letras = []
 
-    print("Salvando Treinamento Z, tamanho:" + str(len(HOGSLista)))
-    numpy.save("Treinamento_Z", HOGSLista)
-    print("Salvo")
+    #region Carrega labels das letras
+    labelA = LabelLetra("A", "41")
+    letras.append(labelA)
 
-    del HOGSLista[:]
+    labelB = LabelLetra("B", "42")
+    letras.append(labelB)
 
-    for cont in range(0, 1000):
-        imagem = cv2.imread("treinamento\\train_53_00" + "{0:03}".format(cont) + ".png")
-        HOGSLista.append(descriptor.compute(imagem))
+    labelC = LabelLetra("C", "43")
+    letras.append(labelC)
 
-    print("Salvando Treinamento S, tamanho:" + str(len(HOGSLista)))
-    numpy.save("Treinamento_S", HOGSLista)
-    print("Salvo")
+    labelD = LabelLetra("D", "44")
+    letras.append(labelD)
 
-    del HOGSLista[:]
+    labelE = LabelLetra("E", "45")
+    letras.append(labelE)
 
-    for cont in range(0, 1000):
-        imagem = cv2.imread("treinamento\\train_58_00" + "{0:03}".format(cont) + ".png")
-        HOGSLista.append(descriptor.compute(imagem))
+    labelF = LabelLetra("F", "46")
+    letras.append(labelF)
 
-    print("Salvando Treinamento X, tamanho:" + str(len(HOGSLista)))
-    numpy.save("Treinamento_X", HOGSLista)
-    print("Salvo")
+    labelG = LabelLetra("G", "47")
+    letras.append(labelG)
 
-    del HOGSLista[:]
+    labelH = LabelLetra("H", "48")
+    letras.append(labelH)
 
-    # Testes
+    labelI = LabelLetra("I", "49")
+    letras.append(labelI)
 
+    labelJ = LabelLetra("J", "4a")
+    letras.append(labelJ)
 
-    for cont in range(0, 300):
-        imagem = cv2.imread("testes\\train_5a_01" + "{0:03}".format(cont) + ".png")
-        HOGSLista.append(descriptor.compute(imagem))
+    labelK = LabelLetra("K", "4b")
+    letras.append(labelK)
 
-    print("Salvando Testes Z, tamanho:" + str(len(HOGSLista)))
-    numpy.save("Testes_Z", HOGSLista)
-    print("Salvo")
+    labelL = LabelLetra("L", "4c")
+    letras.append(labelL)
 
-    del HOGSLista[:]
+    labelM = LabelLetra("M", "4d")
+    letras.append(labelM)
 
-    for cont in range(0, 300):
-        imagem = cv2.imread("testes\\train_53_01" + "{0:03}".format(cont) + ".png")
-        HOGSLista.append(descriptor.compute(imagem))
+    labelN = LabelLetra("N", "4e")
+    letras.append(labelN)
 
-    print("Salvando Testes S, tamanho:" + str(len(HOGSLista)))
-    numpy.save("Testes_S", HOGSLista)
-    print("Salvo")
+    labelO = LabelLetra("O", "4f")
+    letras.append(labelO)
 
-    del HOGSLista[:]
+    labelP = LabelLetra("P", "50")
+    letras.append(labelP)
 
-    for cont in range(0, 300):
-        imagem = cv2.imread("testes\\train_58_01" + "{0:03}".format(cont) + ".png")
-        HOGSLista.append(descriptor.compute(imagem))
+    labelQ = LabelLetra("Q", "51")
+    letras.append(labelQ)
 
-    print("Salvando Testes X, tamanho:" + str(len(HOGSLista)))
-    numpy.save("Testes_X", HOGSLista)
-    print("Salvo")
+    labelR = LabelLetra("R", "52")
+    letras.append(labelR)
 
-    del HOGSLista[:]
+    labelS = LabelLetra("S", "53")
+    letras.append(labelS)
+
+    labelT = LabelLetra("T", "54")
+    letras.append(labelT)
+
+    labelU = LabelLetra("U", "55")
+    letras.append(labelU)
+
+    labelV = LabelLetra("V", "56")
+    letras.append(labelV)
+
+    labelW = LabelLetra("W", "57")
+    letras.append(labelW)
+
+    labelX = LabelLetra("X", "58")
+    letras.append(labelX)
+
+    labelY = LabelLetra("Y", "59")
+    letras.append(labelY)
+
+    labelZ = LabelLetra("Z", "5a")
+    letras.append(labelZ)
+
+    #endregion
+
+    for letraLab in letras:
+
+        for cont in range(0, 1000):
+            nomeArquivo = "treinamento\\train_" + letraLab.label + "_00" + "{0:03}".format(cont) + ".png"
+            imagem = cv2.imread(nomeArquivo)
+            HOGSLista.append(descriptor.compute(imagem))
+
+        print("Salvando Treinamento " + letraLab.letra + ", tamanho:" + str(len(HOGSLista)))
+        numpy.save("Treinamento_"+ letraLab.letra, HOGSLista)
+
+        del HOGSLista[:]
+
+        for cont in range(0, 300):
+            imagem = cv2.imread("testes\\train_" + letraLab.label + "_01" + "{0:03}".format(cont) + ".png")
+            HOGSLista.append(descriptor.compute(imagem))
+
+        print("Salvando Testes " + letraLab.letra + ", tamanho:" + str(len(HOGSLista)))
+        numpy.save("Testes_" + letraLab.letra, HOGSLista)
+
+        del HOGSLista[:]
 
 
 def treinador():
+
+    entradas = []
+    respostas = []
+
+    '''
     HOGS = numpy.load("Treinamento_S.npy")
     print("Lendo arquivos de Treinamento S. Tamanho: " + str(len(HOGS)))
 
@@ -114,14 +161,117 @@ def treinador():
 
     HOGZ = numpy.load("Treinamento_Z.npy")
     print("Lendo arquivos de Treinamento Z. Tamanho: " + str(len(HOGZ)))
+    
+    print("Unificando as listas de Treinamento...")
+    for ent in HOGS:
+        entradas.append(ent)
+        respostas.extend("S")
 
-    entradas = []
-    respostas = []
+    for ent in HOGX:
+        entradas.append(ent)
+        respostas.extend("X")
+
+    for ent in HOGZ:
+        entradas.append(ent)
+        respostas.extend("Z")
+    '''
+    letras = []
+
+    #region Carrega labels das letras
+    labelA = LabelLetra("A", "41")
+    letras.append(labelA)
+
+    labelB = LabelLetra("B", "42")
+    letras.append(labelB)
+
+    labelC = LabelLetra("C", "43")
+    letras.append(labelC)
+
+    labelD = LabelLetra("D", "44")
+    letras.append(labelD)
+
+    labelE = LabelLetra("E", "45")
+    letras.append(labelE)
+
+    labelF = LabelLetra("F", "46")
+    letras.append(labelF)
+
+    labelG = LabelLetra("G", "47")
+    letras.append(labelG)
+
+    labelH = LabelLetra("H", "48")
+    letras.append(labelH)
+
+    labelI = LabelLetra("I", "49")
+    letras.append(labelI)
+
+    labelJ = LabelLetra("J", "4a")
+    letras.append(labelJ)
+
+    labelK = LabelLetra("K", "4b")
+    letras.append(labelK)
+
+    labelL = LabelLetra("L", "4c")
+    letras.append(labelL)
+
+    labelM = LabelLetra("M", "4d")
+    letras.append(labelM)
+
+    labelN = LabelLetra("N", "4e")
+    letras.append(labelN)
+
+    labelO = LabelLetra("O", "4f")
+    letras.append(labelO)
+
+    labelP = LabelLetra("P", "50")
+    letras.append(labelP)
+
+    labelQ = LabelLetra("Q", "51")
+    letras.append(labelQ)
+
+    labelR = LabelLetra("R", "52")
+    letras.append(labelR)
+
+    labelS = LabelLetra("S", "53")
+    letras.append(labelS)
+
+    labelT = LabelLetra("T", "54")
+    letras.append(labelT)
+
+    labelU = LabelLetra("U", "55")
+    letras.append(labelU)
+
+    labelV = LabelLetra("V", "56")
+    letras.append(labelV)
+
+    labelW = LabelLetra("W", "57")
+    letras.append(labelW)
+
+    labelX = LabelLetra("X", "58")
+    letras.append(labelX)
+
+    labelY = LabelLetra("Y", "59")
+    letras.append(labelY)
+
+    labelZ = LabelLetra("Z", "5a")
+    letras.append(labelZ)
+
+    #endregion
+
+    for letraLab in letras:
+
+        dados = numpy.load("Treinamento_" + letraLab.letra + ".npy")
+
+        for ent in dados:
+            entradas.append(ent)
+            respostas.extend(letraLab.letra)
+
+
     errortxt = []
     configtxt = []
 
     MLPClassifier
-    hidden_layer_sizes = (500)
+    hidden_layer_sizes = (250)
     activation = 'logistic'  # sigmoid
     solver = 'adam'
     alpha = 1e-5
@@ -131,7 +281,7 @@ def treinador():
     power_t = 0.5
     max_iter = 200
     shuffle = True
-    random_state = 1
+    random_state = 20
     tol = 0.0001
     verbose = False
     warm_start = False
@@ -167,20 +317,6 @@ def treinador():
             myfile.write(item)
     myfile.close()
 
-    print("Unificando as listas de Treinamento...")
-    for ent in HOGS:
-        entradas.append(ent)
-        respostas.extend("S")
-
-    for ent in HOGX:
-        entradas.append(ent)
-        respostas.extend("X")
-
-    for ent in HOGZ:
-        entradas.append(ent)
-        respostas.extend("Z")
-
-    print("Pronto")
 
     print("Tamanho da lista de Treinamento: " + str(len(entradas)))
     print("Tamanho da lista de respostas: " + str(len(respostas)))
@@ -252,6 +388,6 @@ def treinador():
     file.close()
 
 
-leitor()
+#leitor()
 
 treinador()

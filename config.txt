@@ -63,3 +63,303 @@ early_stopping : False
  beta_1 : 0.9
  beta_2 : 0.999
  epsilon : 1e-08
+Execucao em 08/06/2017 14:51
+
+HOG (descritor) 
+winSize: (128, 128) 
+blockSize: (16, 16) 
+blockStride: (8, 8) 
+cellSize: (8, 8) 
+nbins: 9 
+derivAperture: 1 
+winSigma: -1 
+histogramNormType: 0 
+L2HysThreshold: 0.2 
+gammaCorrection: 1 
+nlevels: 64
+ MLPClassifier 
+ hidden_layer_sizes : 500
+ activation : logistic
+ solver : adam
+ alpha : 1e-05
+ batch_size : auto
+ learning_rate : adaptive
+ learning_rate_init : 0.001
+ power_t : 0.5
+ max_iter : 200
+ shuffle : True
+ random_state : 20
+ tol : 0.0001
+ verbose : True
+ warm_start : False
+ momentum : 0.9
+ nesterovs_momentum : True
+early_stopping : False
+ validation_fraction : 0.1
+ beta_1 : 0.9
+ beta_2 : 0.999
+ epsilon : 1e-08
+Execucao em 08/06/2017 16:38
+
+HOG (descritor) 
+winSize: (128, 128) 
+blockSize: (16, 16) 
+blockStride: (8, 8) 
+cellSize: (8, 8) 
+nbins: 9 
+derivAperture: 1 
+winSigma: -1 
+histogramNormType: 0 
+L2HysThreshold: 0.2 
+gammaCorrection: 1 
+nlevels: 64
+ MLPClassifier 
+ hidden_layer_sizes : 250
+ activation : logistic
+ solver : adam
+ alpha : 1e-05
+ batch_size : auto
+ learning_rate : adaptive
+ learning_rate_init : 0.001
+ power_t : 0.5
+ max_iter : 200
+ shuffle : True
+ random_state : 20
+ tol : 0.0001
+ verbose : True
+ warm_start : False
+ momentum : 0.9
+ nesterovs_momentum : True
+early_stopping : False
+ validation_fraction : 0.1
+ beta_1 : 0.9
+ beta_2 : 0.999
+ epsilon : 1e-08
+Execucao em 08/06/2017 16:41
+
+HOG (descritor) 
+winSize: (128, 128) 
+blockSize: (16, 16) 
+blockStride: (16, 16) 
+cellSize: (16, 16) 
+nbins: 9 
+derivAperture: 1 
+winSigma: -1 
+histogramNormType: 0 
+L2HysThreshold: 0.2 
+gammaCorrection: 1 
+nlevels: 64
+ MLPClassifier 
+ hidden_layer_sizes : 250
+ activation : logistic
+ solver : adam
+ alpha : 1e-05
+ batch_size : auto
+ learning_rate : adaptive
+ learning_rate_init : 0.001
+ power_t : 0.5
+ max_iter : 200
+ shuffle : True
+ random_state : 20
+ tol : 0.0001
+ verbose : True
+ warm_start : False
+ momentum : 0.9
+ nesterovs_momentum : True
+early_stopping : False
+ validation_fraction : 0.1
+ beta_1 : 0.9
+ beta_2 : 0.999
+ epsilon : 1e-08
+Execucao em 08/06/2017 17:29
+
+HOG (descritor) 
+winSize: (128, 128) 
+blockSize: (16, 16) 
+blockStride: (16, 16) 
+cellSize: (16, 16) 
+nbins: 9 
+derivAperture: 1 
+winSigma: -1 
+histogramNormType: 0 
+L2HysThreshold: 0.2 
+gammaCorrection: 1 
+nlevels: 64
+Execucao em 08/06/2017 17:34
+
+HOG (descritor) 
+winSize: (128, 128) 
+blockSize: (16, 16) 
+blockStride: (16, 16) 
+cellSize: (16, 16) 
+nbins: 9 
+derivAperture: 1 
+winSigma: -1 
+histogramNormType: 0 
+L2HysThreshold: 0.2 
+gammaCorrection: 1 
+nlevels: 64
+Execucao em 08/06/2017 17:35
+
+HOG (descritor) 
+winSize: (128, 128) 
+blockSize: (16, 16) 
+blockStride: (16, 16) 
+cellSize: (16, 16) 
+nbins: 9 
+derivAperture: 1 
+winSigma: -1 
+histogramNormType: 0 
+L2HysThreshold: 0.2 
+gammaCorrection: 1 
+nlevels: 64
+Execucao em 08/06/2017 17:38
+
+HOG (descritor) 
+winSize: (128, 128) 
+blockSize: (16, 16) 
+blockStride: (16, 16) 
+cellSize: (16, 16) 
+nbins: 9 
+derivAperture: 1 
+winSigma: -1 
+histogramNormType: 0 
+L2HysThreshold: 0.2 
+gammaCorrection: 1 
+nlevels: 64
+Execucao em 08/06/2017 17:42
+
+HOG (descritor) 
+winSize: (128, 128) 
+blockSize: (16, 16) 
+blockStride: (16, 16) 
+cellSize: (16, 16) 
+nbins: 9 
+derivAperture: 1 
+winSigma: -1 
+histogramNormType: 0 
+L2HysThreshold: 0.2 
+gammaCorrection: 1 
+nlevels: 64
+Execucao em 08/06/2017 17:45
+
+HOG (descritor) 
+winSize: (128, 128) 
+blockSize: (16, 16) 
+blockStride: (16, 16) 
+cellSize: (16, 16) 
+nbins: 9 
+derivAperture: 1 
+winSigma: -1 
+histogramNormType: 0 
+L2HysThreshold: 0.2 
+gammaCorrection: 1 
+nlevels: 64
+Execucao em 08/06/2017 17:49
+
+HOG (descritor) 
+winSize: (128, 128) 
+blockSize: (16, 16) 
+blockStride: (16, 16) 
+cellSize: (16, 16) 
+nbins: 9 
+derivAperture: 1 
+winSigma: -1 
+histogramNormType: 0 
+L2HysThreshold: 0.2 
+gammaCorrection: 1 
+nlevels: 64
+Execucao em 08/06/2017 17:49
+
+HOG (descritor) 
+winSize: (128, 128) 
+blockSize: (16, 16) 
+blockStride: (16, 16) 
+cellSize: (16, 16) 
+nbins: 9 
+derivAperture: 1 
+winSigma: -1 
+histogramNormType: 0 
+L2HysThreshold: 0.2 
+gammaCorrection: 1 
+nlevels: 64
+ MLPClassifier 
+ hidden_layer_sizes : 250
+ activation : logistic
+ solver : adam
+ alpha : 1e-05
+ batch_size : auto
+ learning_rate : adaptive
+ learning_rate_init : 0.001
+ power_t : 0.5
+ max_iter : 200
+ shuffle : True
+ random_state : 20
+ tol : 0.0001
+ verbose : False
+ warm_start : False
+ momentum : 0.9
+ nesterovs_momentum : True
+early_stopping : False
+ validation_fraction : 0.1
+ beta_1 : 0.9
+ beta_2 : 0.999
+ epsilon : 1e-08
+ MLPClassifier 
+ hidden_layer_sizes : 250
+ activation : logistic
+ solver : adam
+ alpha : 1e-05
+ batch_size : auto
+ learning_rate : adaptive
+ learning_rate_init : 0.001
+ power_t : 0.5
+ max_iter : 200
+ shuffle : True
+ random_state : 20
+ tol : 0.0001
+ verbose : True
+ warm_start : False
+ momentum : 0.9
+ nesterovs_momentum : True
+early_stopping : False
+ validation_fraction : 0.1
+ beta_1 : 0.9
+ beta_2 : 0.999
+ epsilon : 1e-08
+Execucao em 08/06/2017 18:05
+
+HOG (descritor) 
+winSize: (128, 128) 
+blockSize: (16, 16) 
+blockStride: (16, 16) 
+cellSize: (8, 8) 
+nbins: 9 
+derivAperture: 1 
+winSigma: -1 
+histogramNormType: 0 
+L2HysThreshold: 0.2 
+gammaCorrection: 1 
+nlevels: 64
+ MLPClassifier 
+ hidden_layer_sizes : 250
+ activation : logistic
+ solver : adam
+ alpha : 1e-05
+ batch_size : auto
+ learning_rate : adaptive
+ learning_rate_init : 0.001
+ power_t : 0.5
+ max_iter : 200
+ shuffle : True
+ random_state : 20
+ tol : 0.0001
+ verbose : False
+ warm_start : False
+ momentum : 0.9
+ nesterovs_momentum : True
+early_stopping : False
+ validation_fraction : 0.1
+ beta_1 : 0.9
+ beta_2 : 0.999
+ epsilon : 1e-08
