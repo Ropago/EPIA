@@ -1,13 +1,8 @@
 # coding=utf-8
-import numpy
 import cv2
 from skimage.feature import local_binary_pattern
-from skimage import data
 import numpy
-import time
 from sklearn.neural_network import MLPClassifier
-import pickle
-from sklearn.model_selection import KFold
 
 # MLPClassifier
 hidden_layer_sizes=(500)
@@ -53,89 +48,45 @@ def geraDescritor(imagem):
     histograma = fator[:, 1]/sum(fator[:, 1])
     # return histograma
     return histograma
-    '''
-    return descriptor'''
 
 
 def mandaDescritor():
-    total_treino = []
-    total_teste = []
+    entrada_treino = []
+    entrada_teste = []
+    saida_treino = []
+    saida_teste = []
 
     # gera descritor treino
     for cont in range(0, 1):
-        img = cv2.imread("treinamento\\train_5a_00" + "{0:03}".format(cont) + ".png")
+        img = cv2.imread("dataset2\\treinamento\\train_5a_00" + "{0:03}".format(cont) + ".png")
         imagem = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         t1 = geraDescritor(imagem)
-        total_treino.append(t1)
-        print ("ESSE E O TREINO: ",  (numpy.array(t1).shape))
-        print t1
+        entrada_treino.append(t1)
+        saida_treino.append("Z")
+        print "ESSE E O TREINO: ",  (numpy.array(t1).shape)
+        print "\n", t1, "\n"
 
 
     # gera decritor teste
     for cont in range(0, 1):
-        img = cv2.imread("testes\\train_5a_01" + "{0:03}".format(cont) + ".png")
+        img = cv2.imread("dataset2\\testes\\train_5a_01" + "{0:03}".format(cont) + ".png")
         imagem = cv2.cvtColor(img, cv2.COLOR_BGRA2GRAY)
         t2 = geraDescritor(imagem)
-        total_teste.append(t2)
-        print ("\n\nESSE E O TESTE:",  (numpy.array(t2).shape))
-        print t2
+        entrada_teste.append(t2)
+        saida_teste.append("Z")
+        print "ESSE E O TESTE:",  (numpy.array(t2).shape)
+        print "\n", t2
 
-    return total_treino, total_teste
-
-winSize = (128,128)
-blockSize = (16,16)
-blockStride = (8,8)
-cellSize = (8,8)
-nbins = 9
-derivAperture = 1
-winSigma = -1
-histogramNormType = 0
-L2HysThreshold = 0.2
-gammaCorrection = 1
-nlevels = 64
-descriptor = cv2.HOGDescriptor(winSize,blockSize,blockStride,cellSize,nbins,derivAperture,winSigma,
-                        histogramNormType,L2HysThreshold,gammaCorrection,nlevels)
-
-for cont in range(0, 1):
-    imagem = cv2.imread("treinamento\\train_5a_00" + "{0:03}".format(cont) + ".png")
-    arrayHog = descriptor.compute(imagem)
-    print "\n DESCRITOR HOG"
-    print numpy.shape(arrayHog)
-    print(arrayHog)
+    return entrada_treino, entrada_teste, saida_treino, saida_teste
 
 
-# vamos começar a gerar o descritor
-listaTeste = []
-listaTreino = []
 
-leque = []
+
 print("\nComeçando a leitura")
-mandaDescritor()
+treino_entrada, teste_entrada, treino_saida, teste_saida = mandaDescritor()
 
 
-print("OLHA SO ",)
 
-ee = numpy.asarray(listaTreino, dtype=float)
-ii = numpy.asarray(listaTeste, dtype=float)
-
-numpy.array(listaTreino, dtype=float)
-
-print ("\nChamando na rede")
-print(ee.shape, ii.shape)
-
-'''
-# converte de 3D para um array 2D
-# a função fit da biblioteca learn só aceita array 2D
-
-nsamples, nx, ny = listaTreino.shape
-novo_treino = listaTreino.reshape((nsamples,nx*ny))
-
-nsamples, nx, ny = listaTeste.shape
-novo_teste = listaTeste.reshape((nsamples,nx*ny))
-
-rede.fit(novo_treino, novo_teste)
-'''
-
-#rede.fit(ee, ii)
+rede.fit(treino_entrada, treino_saida)
 
 print ("\nFim da rede")

@@ -5,16 +5,6 @@ from sklearn.neural_network import MLPClassifier
 import pickle
 from sklearn.model_selection import KFold
 
-
-
-HOGZ = numpy.load("lbp_Treinamento_Z.npy")
-print("Lendo arquivos de Treinamento Z. Tamanho: " + str(len(HOGZ)))
-
-entradas = []
-respostas = []
-errortxt = []
-
-
 MLPClassifier
 hidden_layer_sizes=(500)
 activation='logistic' #sigmoid
@@ -45,7 +35,9 @@ rede = MLPClassifier(hidden_layer_sizes, activation, solver, alpha, batch_size, 
 
 
 
-print("Unificando as listas de Treinamento...")
+
+
+
 
 for ent in HOGZ:
     entradas.append(ent)
