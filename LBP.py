@@ -1,5 +1,4 @@
 # coding=utf-8
-
 import cv2
 from skimage.feature import local_binary_pattern
 import numpy
@@ -17,8 +16,9 @@ method = 'uniform'
 
 
 def rodaTudo():
-    # gera os descritores
     '''
+    # gera os descritores
+
     print("\nComeçando a leitura descritor")
     horario_inicio = datetime.now()
     treino_entrada, teste_entrada = mandaDescritor()
@@ -55,16 +55,18 @@ def rodaTudo():
 
 # metodo para gerar o descritor
 def geraDescritor(imagem):
-    # calcula o descritor
-    descriptor = local_binary_pattern(imagem, n_points, radius, method)
+    lbp = local_binary_pattern(imagem, n_points, radius, 'uniform')
 
-    # normaliza o histograma
-    from scipy.stats import itemfreq
-    fator = itemfreq(descriptor.ravel())
-    histograma = fator[:, 1] / sum(fator[:, 1])
 
-    # return histograma
-    return histograma
+    (hist, _) = numpy.histogram(lbp.ravel(),
+                             bins=numpy.arange(0, n_points + 3),
+                             range=(0, n_points + 2))
+
+
+    # normalize the histogram
+    hist = hist.astype("float")
+    hist /= (hist.sum() + 1e-7)
+    return hist
 
 
 # metodo para mandar imagens para o descritor
@@ -153,7 +155,11 @@ def mandaDescritor():
     letras.append(labelZ)
 
     for letraLab in letras:
-        # gera o descritor para as imagens de treinamento
+        # limpa as listas
+        del entrada_treino[:]
+        del entrada_teste[:]
+
+        # gera descritor para as imagens treinamento
         for cont in range(0, 1000):
             nomeArquivo = cv2.imread("dataset2\\treinamento\\train_" + letraLab.label + "_00" + "{0:03}".format(cont) + ".png")
             imagem = cv2.cvtColor(nomeArquivo, cv2.COLOR_BGR2GRAY)
@@ -162,7 +168,7 @@ def mandaDescritor():
         # salva arquivo com o descritor
         print("Salvando Treinamento " + letraLab.letra + ", tamanho:" + str(len(entrada_treino)))
         numpy.save("descritores\\lbp\\Treinamento_" + letraLab.letra, entrada_treino)
-
+        ''' TEM 300 IMAGENS TESTE PRA CADA LETRA?
         # gera descritor para as imagens teste
         for cont in range(0, 300):
             nomeArquivo = cv2.imread("dataset2\\testes\\train_" + letraLab.label + "_01" + "{0:03}".format(cont) + ".png")
@@ -172,7 +178,7 @@ def mandaDescritor():
         # salva arquivo com o descritor
         print("Salvando Testes " + letraLab.letra + ", tamanho:" + str(len(entrada_teste)))
         numpy.save("descritores\\lbp\\Testes_" + letraLab.letra, entrada_teste)
-
+        '''
     # retorna as listas de descritores geradas
     return entrada_treino, entrada_teste
 
@@ -319,10 +325,6 @@ def controlaRede(treino_entrada, treino_saida):
                          max_iter, shuffle, random_state, tol, verbose, warm_start, momentum, nesterovs_momentum,
                          early_stopping, validation_fraction, beta_1, beta_2, epsilon)
 
-    treino_entrada = numpy.array(treino_entrada)
-    treino_entrada = treino_entrada.reshape(len(treino_entrada), -1)
-    treino_saida = numpy.array(treino_saida)
-
     print("Tamanho da lista de Treinamento: " + str(len(treino_entrada)))
     print("Tamanho da lista de saida_treino: " + str(len(treino_saida)))
 
@@ -334,6 +336,9 @@ def controlaRede(treino_entrada, treino_saida):
 
     print("Iniciando Treinamento da rede...")
 
+    entrada_treino = entrada_teste = []
+    resposta_treino = resposta_teste = []
+
     # K FOLD CROSS
     k_fold = KFold(n_splits=5, random_state=None, shuffle=True)
     epoca = 0
@@ -342,14 +347,15 @@ def controlaRede(treino_entrada, treino_saida):
         print(" -> rodando epoca: ", epoca)
 
         # seleciona datasets unicos para treinar e testar
-        entrada_treino, entrada_teste = treino_entrada[idTreino], treino_entrada[idTeste]
-        resposta_treino, resposta_teste = treino_saida[idTreino], treino_saida[idTeste]
 
-        print("Tamanhos:\nEntrada: %s\nRespostas: %s" % (str(len(entrada_treino)), str(len(resposta_treino))))
+        entrada_treino = (treino_entrada[idTreino])
+        resposta_treino = (treino_saida[idTreino])
 
-        print(" -> treinando a rede")
-        # treina rede
+        entrada_treino =  numpy.array(entrada_treino)
+        resposta_treino = numpy.array(resposta_treino)
+
         rede.fit(entrada_treino, resposta_treino)
+
 
         # atualiza epoca
         epoca = epoca + 1
