@@ -15,7 +15,7 @@ def leitor():
     winSize = (128, 128)
     blockSize = (16, 16)
     blockStride = (16, 16)
-    cellSize = (8, 8)
+    cellSize = (16, 16)
     nbins = 9
     derivAperture = 1
     winSigma = -1
@@ -133,7 +133,9 @@ def leitor():
             HOGSLista.append(descriptor.compute(imagem))
 
         print("Salvando Treinamento " + letraLab.letra + ", tamanho:" + str(len(HOGSLista)))
-        numpy.save("Treinamento_"+ letraLab.letra, HOGSLista)
+        EntradasArray = numpy.array(HOGSLista)
+        ArrayCorrigida = EntradasArray.reshape(len(EntradasArray), -1)
+        numpy.save("descritores\\hog\\Treinamento_"+ letraLab.letra, ArrayCorrigida)
 
         del HOGSLista[:]
 
@@ -142,7 +144,9 @@ def leitor():
             HOGSLista.append(descriptor.compute(imagem))
 
         print("Salvando Testes " + letraLab.letra + ", tamanho:" + str(len(HOGSLista)))
-        numpy.save("Testes_" + letraLab.letra, HOGSLista)
+        EntradasArray = numpy.array(HOGSLista)
+        ArrayCorrigida = EntradasArray.reshape(len(EntradasArray), -1)
+        numpy.save("descritores\\hog\\Testes_" + letraLab.letra, ArrayCorrigida)
 
         del HOGSLista[:]
 
@@ -260,7 +264,7 @@ def treinador():
 
     for letraLab in letras:
 
-        dados = numpy.load("Treinamento_" + letraLab.letra + ".npy")
+        dados = numpy.load("descritores\\hog\\Treinamento_" + letraLab.letra + ".npy")
 
         for ent in dados:
             entradas.append(ent)
@@ -277,13 +281,13 @@ def treinador():
     alpha = 1e-5
     batch_size = 'auto'
     learning_rate = 'adaptive'
-    learning_rate_init = 0.001
+    learning_rate_init = 0.002
     power_t = 0.5
-    max_iter = 200
+    max_iter = 350
     shuffle = True
     random_state = 20
     tol = 0.0001
-    verbose = False
+    verbose = True
     warm_start = False
     momentum = 0.9
     nesterovs_momentum = True
@@ -321,11 +325,10 @@ def treinador():
     print("Tamanho da lista de Treinamento: " + str(len(entradas)))
     print("Tamanho da lista de respostas: " + str(len(respostas)))
 
-    print("Corrigindo dimensao da lista de entradas...")
+    print("Alterando entradas para array...")
     EntradasArray = numpy.array(entradas)
-    ArrayCorrigida = EntradasArray.reshape(len(EntradasArray), -1)
-
     respostas = numpy.array(respostas)
+
     print("Pronto")
 
     # treinamento
@@ -338,11 +341,11 @@ def treinador():
     k_fold = KFold(n_splits=5, random_state=None, shuffle=True)
     epoca = 0
 
-    for idTreino, idTeste in k_fold.split(ArrayCorrigida):
+    for idTreino, idTeste in k_fold.split(EntradasArray):
         print(" -> rodando epoca: ", epoca)
 
         # seleciona datasets unicos para treinar e testar
-        entrada_treino, entrada_teste = ArrayCorrigida[idTreino], ArrayCorrigida[idTeste]
+        entrada_treino, entrada_teste = EntradasArray[idTreino], EntradasArray[idTeste]
         resposta_treino, resposta_teste = respostas[idTreino], respostas[idTeste]
 
         print("shape 1: %s  shape 2: %s" % (entrada_treino, resposta_treino))
