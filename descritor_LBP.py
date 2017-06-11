@@ -40,14 +40,19 @@ radius = 2
 # gera o descritor
 def geraDescritor(imagem):
     # calcula o descritor
-    descriptor = local_binary_pattern(imagem, n_points, radius, 'uniform')
+    lbp = local_binary_pattern(imagem, n_points, radius, 'uniform')
 
-    # normaliza o histograma
-    from scipy.stats import itemfreq
-    fator = itemfreq(descriptor.ravel())
-    histograma = fator[:, 1]/sum(fator[:, 1])
+
+    (hist, _) = numpy.histogram(lbp.ravel(),
+                             bins=numpy.arange(0, n_points + 3),
+                             range=(0, n_points + 2))
+
+
+    # normalize the histogram
+    hist = hist.astype("float")
+    hist /= (hist.sum() + 1e-7)
     # return histograma
-    return histograma
+    return hist
 
 
 def mandaDescritor():
@@ -57,7 +62,7 @@ def mandaDescritor():
     saida_teste = []
 
     # gera descritor treino
-    for cont in range(0, 1):
+    for cont in range(0, 100):
         img = cv2.imread("dataset2\\treinamento\\train_5a_00" + "{0:03}".format(cont) + ".png")
         imagem = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         t1 = geraDescritor(imagem)
@@ -66,27 +71,34 @@ def mandaDescritor():
         print "ESSE E O TREINO: ",  (numpy.array(t1).shape)
         print "\n", t1, "\n"
 
-
-    # gera decritor teste
-    for cont in range(0, 1):
-        img = cv2.imread("dataset2\\testes\\train_5a_01" + "{0:03}".format(cont) + ".png")
-        imagem = cv2.cvtColor(img, cv2.COLOR_BGRA2GRAY)
-        t2 = geraDescritor(imagem)
-        entrada_teste.append(t2)
-        saida_teste.append("Z")
-        print "ESSE E O TESTE:",  (numpy.array(t2).shape)
-        print "\n", t2
-
-    return entrada_treino, entrada_teste, saida_treino, saida_teste
+    return entrada_treino, saida_treino
 
 
 
 
 print("\nComeçando a leitura")
-treino_entrada, teste_entrada, treino_saida, teste_saida = mandaDescritor()
+treino_entrada, treino_saida = mandaDescritor()
+
+print treino_saida
+
+sucesso = numpy.array(treino_saida)
+felicidade = numpy.array(treino_entrada)
+treino_entrada = felicidade.reshape(len(felicidade), -1)
+print felicidade.shape, sucesso.shape
 
 
+rede.fit(felicidade, sucesso)
+'''
+for cada in treino_entrada:
+    num = treino_entrada.index(cada)
+    item  = treino_entrada[num]
+    otem = treino_saida[num]
+    print "\n", "ITEM E OTEM: ", item, " ** ", otem
+    item = numpy.asarray(item)
+    otem = numpy.array(otem)
+    print item.shape, "_________", otem.shape
+    rede.fit(item, otem.all(axis= None))
+'''
 
-rede.fit(treino_entrada, treino_saida)
 
 print ("\nFim da rede")
