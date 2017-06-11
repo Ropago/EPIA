@@ -3,6 +3,7 @@ import cv2
 from skimage.feature import local_binary_pattern
 import numpy
 from sklearn.neural_network import MLPClassifier
+from LabelLetra import LabelLetra
 
 # MLPClassifier
 hidden_layer_sizes=(500)
@@ -74,10 +75,107 @@ def mandaDescritor():
     return entrada_treino, saida_treino
 
 
+def novoMandaDescritor():
+    entrada_treino = []
+    entrada_teste = []
+    saida_treino = []
+    saida_teste = []
+    letras = []
+
+    # region Carrega labels das letras
+    labelA = LabelLetra("A", "41")
+    letras.append(labelA)
+
+    labelB = LabelLetra("B", "42")
+    letras.append(labelB)
+
+    labelC = LabelLetra("C", "43")
+    letras.append(labelC)
+    '''
+    labelD = LabelLetra("D", "44")
+    letras.append(labelD)
+
+    labelE = LabelLetra("E", "45")
+    letras.append(labelE)
+
+    labelF = LabelLetra("F", "46")
+    letras.append(labelF)
+
+    labelG = LabelLetra("G", "47")
+    letras.append(labelG)
+
+    labelH = LabelLetra("H", "48")
+    letras.append(labelH)
+
+    labelI = LabelLetra("I", "49")
+    letras.append(labelI)
+
+    labelJ = LabelLetra("J", "4a")
+    letras.append(labelJ)
+
+    labelK = LabelLetra("K", "4b")
+    letras.append(labelK)
+
+    labelL = LabelLetra("L", "4c")
+    letras.append(labelL)
+
+    labelM = LabelLetra("M", "4d")
+    letras.append(labelM)
+
+    labelN = LabelLetra("N", "4e")
+    letras.append(labelN)
+
+    labelO = LabelLetra("O", "4f")
+    letras.append(labelO)
+
+    labelP = LabelLetra("P", "50")
+    letras.append(labelP)
+
+    labelQ = LabelLetra("Q", "51")
+    letras.append(labelQ)
+
+    labelR = LabelLetra("R", "52")
+    letras.append(labelR)
+
+    labelS = LabelLetra("S", "53")
+    letras.append(labelS)
+
+    labelT = LabelLetra("T", "54")
+    letras.append(labelT)
+
+    labelU = LabelLetra("U", "55")
+    letras.append(labelU)
+
+    labelV = LabelLetra("V", "56")
+    letras.append(labelV)
+
+    labelW = LabelLetra("W", "57")
+    letras.append(labelW)
+
+    labelX = LabelLetra("X", "58")
+    letras.append(labelX)
+
+    labelY = LabelLetra("Y", "59")
+    letras.append(labelY)
+
+    labelZ = LabelLetra("Z", "5a")
+    letras.append(labelZ)
+    '''
+    for letraLab in letras:
+        print "Lendo a letra: ", letraLab.letra
+        # gera o descritor para as imagens de treinamento
+        for cont in range(0, 1000):
+            nomeArquivo = cv2.imread("dataset2\\treinamento\\train_" + letraLab.label + "_00" + "{0:03}".format(cont) + ".png")
+            imagem = cv2.cvtColor(nomeArquivo, cv2.COLOR_BGR2GRAY)
+            entrada_treino.append(geraDescritor(imagem))
+            entrada_teste.append(letraLab.letra)
+
+    return entrada_treino, entrada_teste
+
 
 
 print("\nComeçando a leitura")
-treino_entrada, treino_saida = mandaDescritor()
+treino_entrada, treino_saida = novoMandaDescritor()
 
 print treino_saida
 
