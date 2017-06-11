@@ -135,7 +135,7 @@ def leitor():
         print("Salvando Treinamento " + letraLab.letra + ", tamanho:" + str(len(HOGSLista)))
         EntradasArray = numpy.array(HOGSLista)
         ArrayCorrigida = EntradasArray.reshape(len(EntradasArray), -1)
-        numpy.save("Treinamento_"+ letraLab.letra, ArrayCorrigida)
+        numpy.save("descritores\\hog\\Treinamento_"+ letraLab.letra, ArrayCorrigida)
 
         del HOGSLista[:]
 
@@ -146,7 +146,7 @@ def leitor():
         print("Salvando Testes " + letraLab.letra + ", tamanho:" + str(len(HOGSLista)))
         EntradasArray = numpy.array(HOGSLista)
         ArrayCorrigida = EntradasArray.reshape(len(EntradasArray), -1)
-        numpy.save("Testes_" + letraLab.letra, ArrayCorrigida)
+        numpy.save("descritores\\hog\\Testes_" + letraLab.letra, ArrayCorrigida)
 
         del HOGSLista[:]
 
@@ -264,7 +264,7 @@ def treinador():
 
     for letraLab in letras:
 
-        dados = numpy.load("Treinamento_" + letraLab.letra + ".npy")
+        dados = numpy.load("descritores\\hog\\Treinamento_" + letraLab.letra + ".npy")
 
         for ent in dados:
             entradas.append(ent)
@@ -281,9 +281,9 @@ def treinador():
     alpha = 1e-5
     batch_size = 'auto'
     learning_rate = 'adaptive'
-    learning_rate_init = 0.01
+    learning_rate_init = 0.002
     power_t = 0.5
-    max_iter = 200
+    max_iter = 350
     shuffle = True
     random_state = 20
     tol = 0.0001
@@ -325,10 +325,10 @@ def treinador():
     print("Tamanho da lista de Treinamento: " + str(len(entradas)))
     print("Tamanho da lista de respostas: " + str(len(respostas)))
 
-    print("Corrigindo dimensao da lista de entradas...")
+    print("Alterando entradas para array...")
     EntradasArray = numpy.array(entradas)
-
     respostas = numpy.array(respostas)
+
     print("Pronto")
 
     # treinamento
