@@ -8,6 +8,8 @@ import time
 from datetime import datetime
 from sklearn.model_selection import KFold
 import pickle
+import os
+import codecs
 
 n_points = 16
 radius = 2
@@ -219,7 +221,7 @@ def leitorDescritor():
 
     labelE = LabelLetra("E", "45")
     letras.append(labelE)
-
+    '''
     labelF = LabelLetra("F", "46")
     letras.append(labelF)
 
@@ -282,7 +284,7 @@ def leitorDescritor():
 
     labelZ = LabelLetra("Z", "5a")
     letras.append(labelZ)
-
+    '''
     for letraLab in letras:
         dados = numpy.load("descritores\\lbp\\Treinamento_" + letraLab.letra + ".npy")
         for ent in dados:
@@ -360,8 +362,42 @@ def controlaRede(treino_entrada, treino_saida):
         # atualiza epoca
         epoca = epoca + 1
 
+
     # gera o model.dat
-    pickle.dump(rede, open("descritores\\lbp\\model.dat", "wb"))
+    matrizPesos = numpy.asarray(rede.coefs_)
+    pickle.dump(matrizPesos, open("descritores\\lbp\\model.dat", "wb"))
+    print " salva model.dat"
+
+
+    # gera arquivo config.txt
+    configtxtdata = ("Execucao em " + time.strftime("%d/%m/%Y") + " " + time.strftime("%H:%M"))
+
+    # os parametros do descritor
+    configlbp = ("\n\nLBP (descritor) \nnum_points: %s \nradius: %s \nmethod: %s" % (n_points, radius, method))
+
+    # os parametros da rede
+    configrede = ("\n\nMLPClassifier (rede)\nhidden_layer_sizes : %s\nactivation : %s\nsolver : %s\nalpha : %s\nbatch_size : %s\n"
+        "learning_rate : %s\nlearning_rate_init : %s\npower_t : %s\nmax_iter : %s\nshuffle : %s\n"
+        "random_state : %s\ntol : %s\nverbose : %s\nwarm_start : %s\nmomentum : %s\nnesterovs_momentum : %s\n"
+        "early_stopping : %s\nvalidation_fraction : %s\nbeta_1 : %s\nbeta_2 : %s\nepsilon : %s" %
+        (str(hidden_layer_sizes), str(activation), str(solver), str(alpha), str(batch_size), str(learning_rate),
+         str(learning_rate_init), str(power_t), str(max_iter), str(shuffle), str(random_state), str(tol),
+         str(verbose), str(warm_start), str(momentum), str(nesterovs_momentum), str(early_stopping),
+         str(validation_fraction), str(beta_1), str(beta_2), str(epsilon)))
+
+    try:
+        os.remove("descritores\\lbp\\config.txt")
+    except OSError:
+        pass
+
+    with codecs.open("descritores\\lbp\\config.txt", "a", "utf-8") as myfile:
+        myfile.write(configtxtdata)
+        myfile.write(configlbp)
+        myfile.write(configrede)
+    myfile.close()
+    print " salva config.txt"
+
+
 
     # retorna
     return
