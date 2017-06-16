@@ -28,22 +28,22 @@ nlevels = 64
 
 # configurações da rede
 # MLPClassifier: configurações da rede
-hidden_layer_sizes = (250)
+hidden_layer_sizes = (400)
 activation = 'logistic'  # sigmoid
-solver = 'adam'
+solver = 'sgd'
 alpha = 1e-5
 batch_size = 'auto'
 learning_rate = 'adaptive'
-learning_rate_init = 0.001
+learning_rate_init = 0.1
 power_t = 0.5
-max_iter = 200
+max_iter = 1000
 shuffle = True
 random_state = 20
 tol = 0.0001
 verbose = False
 warm_start = False
 momentum = 0.9
-nesterovs_momentum = True
+nesterovs_momentum = False
 early_stopping = False
 validation_fraction = 0.1
 beta_1 = 0.9
@@ -270,7 +270,9 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
     # TREINA A REDE: kfold com 5 épocas
     k_fold = KFold(n_splits=5, random_state=None, shuffle=True)
     epoca = 0
-    erro_treinamento = erro_validacao = []
+    erro_treinamento = []
+    erro_validacao = []
+    teste = []
 
     for idTreino, idTeste in k_fold.split(treino_entrada):
         print(" -> rodando epoca: ", epoca)
@@ -293,6 +295,11 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
         # atualiza epoca
         epoca = epoca + 1
 
+    # gera o model.dat
+    matrizPesos = numpy.asarray(rede.coefs_)
+    pickle.dump(matrizPesos, open(pasta_origem + "model.dat", "wb"))
+    print ("- salva model.dat")
+
     # TESTA A REDE: com a partição de testes
     print("Testando a rede com  a particao de testes...")
 
@@ -314,10 +321,7 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
     plot_confusion_matrix(matriz_confusao, classes=classeLetra, normalize=False, title="Matriz de confusao")
     plot_confusion_matrix(matriz_confusao, classes=classeLetra, normalize=True, title="Matriz de confusao normalizada")
 
-    # gera o model.dat
-    matrizPesos = numpy.asarray(rede.coefs_)
-    pickle.dump(matrizPesos, open(pasta_origem + "model.dat", "wb"))
-    print ("- salva model.dat")
+
 
     # gera arquivo config.txt
     configtxtdata = ("Execucao em " + time.strftime("%d/%m/%Y") + " " + time.strftime("%H:%M"))
@@ -327,6 +331,7 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
                  "derivAperture: %s \nwinSigma: %s \nhistogramNormType: %s \nL2HysThreshold: %s \ngammaCorrection: %s \n"
                  "nlevels: %s" % (winSize, blockSize, blockStride, cellSize, nbins, derivAperture, winSigma,
                                   histogramNormType, L2HysThreshold, gammaCorrection, nlevels))
+
 
     # os parametros da rede
     configrede = (
@@ -338,8 +343,6 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
      str(learning_rate_init), str(power_t), str(max_iter), str(shuffle), str(random_state), str(tol),
      str(verbose), str(warm_start), str(momentum), str(nesterovs_momentum), str(early_stopping),
      str(validation_fraction), str(beta_1), str(beta_2), str(epsilon)))
-
-
 
     try:
         os.remove(pasta_origem + "config.txt")

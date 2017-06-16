@@ -22,23 +22,23 @@ method = 'uniform'
 
 # configurações da rede
 # MLPClassifier: configurações da rede
-hidden_layer_sizes = (250)
+hidden_layer_sizes = (400)
 activation = 'logistic'  # sigmoid
-solver = 'adam'
+solver = 'sgd'
 alpha = 1e-5
 batch_size = 'auto'
 learning_rate = 'adaptive'
-learning_rate_init = 0.001
+learning_rate_init = 0.1
 power_t = 0.5
-max_iter = 200
+max_iter = 1000
 shuffle = True
 random_state = 20
 tol = 0.0001
-verbose = False
+verbose = True
 warm_start = False
 momentum = 0.9
-nesterovs_momentum = True
-early_stopping = False
+nesterovs_momentum = False
+early_stopping = True
 validation_fraction = 0.1
 beta_1 = 0.9
 beta_2 = 0.999
@@ -51,7 +51,7 @@ pasta_origem = "descritores\\lbp\\"
 def rodaTudo():
 
     # gera os descritores
-    '''
+    #'''
     print("\nComeçando a leitura descritor")
     horario_inicio = datetime.now()
     treino_entrada, teste_entrada = geraDescritor()
@@ -65,7 +65,7 @@ def rodaTudo():
     with open(pasta_origem + "tempo_descrever_imagens.txt", "a") as myfile:
         myfile.write(tempo_descrever_imagens)
     myfile.close()
-    '''
+    #'''
 
 
     # le o descritor gerado
@@ -98,7 +98,7 @@ def geraArrayLetras():
 
     labelC = LabelLetra("C", "43")
     letras.append(labelC)
-    '''
+
     labelD = LabelLetra("D", "44")
     letras.append(labelD)
 
@@ -167,7 +167,7 @@ def geraArrayLetras():
 
     labelZ = LabelLetra("Z", "5a")
     letras.append(labelZ)
-    '''
+
     return letras
 
 
@@ -184,6 +184,7 @@ def calculaDescritor(imagem):
     # normaliza o histograma
     hist = hist.astype("float")
     hist /= (hist.sum() + 1e-7)
+
     return hist
 
 
@@ -375,8 +376,9 @@ def plot_confusion_matrix(cm, classes, normalize, title, cmap=plt.cm.Blues):
     plt.title(title)
     plt.colorbar()
     tick_marks = numpy.arange(len(classes))
-    plt.xticks(tick_marks, classes, rotation=45)
+    plt.xticks(tick_marks, classes)
     plt.yticks(tick_marks, classes)
+    plt.subplots_adjust(bottom=0.15)
 
     if normalize:
         cm = cm.astype('float') / cm.sum(axis=1)[:, numpy.newaxis]
@@ -394,7 +396,8 @@ def plot_confusion_matrix(cm, classes, normalize, title, cmap=plt.cm.Blues):
                  horizontalalignment="center",
                  color="white" if cm[i, j] > thresh else "black")
 
-    plt.tight_layout()
+
+    #plt.tight_layout()
     plt.ylabel('Classe real')
     plt.xlabel('Classe prevista')
     fig.savefig(pasta_origem + nomeArquivo)
