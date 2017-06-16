@@ -1,9 +1,17 @@
-Execucao em 15/06/2017 21:04
+Execucao em 15/06/2017 21:07
 
-LBP (descritor) 
-num_points: 24 
-radius: 3 
-method: uniform
+HOG (descritor) 
+winSize: (128, 128) 
+blockSize: (16, 16) 
+blockStride: (16, 16) 
+cellSize: (16, 16) 
+nbins: 9 
+derivAperture: 1 
+winSigma: -1 
+histogramNormType: 0 
+L2HysThreshold: 0.2 
+gammaCorrection: 1 
+nlevels: 64
 
 MLPClassifier (rede)
 hidden_layer_sizes : 250
