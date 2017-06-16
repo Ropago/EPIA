@@ -40,7 +40,7 @@ max_iter = 1000
 shuffle = True
 random_state = 20
 tol = 0.0001
-verbose = False
+verbose = True
 warm_start = False
 momentum = 0.9
 nesterovs_momentum = False
@@ -246,9 +246,16 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
     errortxt = []
     configtxt = []
 
-    rede = MLPClassifier(hidden_layer_sizes, activation, solver, alpha, batch_size, learning_rate, learning_rate_init,
+    redes = []
+
+    for cont in range(0, 5):
+        redes.append(MLPClassifier(hidden_layer_sizes, activation, solver, alpha, batch_size, learning_rate, learning_rate_init,
                          power_t, max_iter, shuffle, random_state, tol, verbose, warm_start, momentum,
-                         nesterovs_momentum, early_stopping, validation_fraction, beta_1, beta_2, epsilon)
+                         nesterovs_momentum, early_stopping, validation_fraction, beta_1, beta_2, epsilon))
+
+    #rede = MLPClassifier(hidden_layer_sizes, activation, solver, alpha, batch_size, learning_rate, learning_rate_init,
+    #                     power_t, max_iter, shuffle, random_state, tol, verbose, warm_start, momentum,
+    #                     nesterovs_momentum, early_stopping, validation_fraction, beta_1, beta_2, epsilon)
 
     print("Tamanho da lista de Treinamento: " + str(len(treino_entrada)))
     print("Tamanho da lista de saida_treino: " + str(len(treino_saida)))
@@ -287,40 +294,55 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
         resposta_treino = numpy.array(resposta_treino)
 
         # treina a rede: gera o erro de treinamento
-        rede.fit(entrada_treino, resposta_treino, pasta_origem + "error.txt")
+        redes[epoca].fit(entrada_treino, resposta_treino, pasta_origem + "error" + str(epoca) +".txt")
 
         # prediz a rede: gera o erro de validação
-        erro_validacao.append(rede.score(entrada_teste, resposta_teste))
+        erro_validacao.append(redes[epoca].score(entrada_teste, resposta_teste))
 
         # atualiza epoca
         epoca = epoca + 1
 
-    # gera o model.dat
-    matrizPesos = numpy.asarray(rede.coefs_)
-    pickle.dump(matrizPesos, open(pasta_origem + "model.dat", "wb"))
-    print ("- salva model.dat")
+    #gera arquivos para comparar as redes
+    melhorScore = 0.0
+    piorScore = 1.0
+    melhorRede = 0
+    piorRede = 0
+
+    for cont in range(0,4):
+        if(erro_validacao[cont] < piorScore):
+            piorScore = erro_validacao[cont]
+            piorRede = cont
+        if(erro_validacao[cont] > melhorScore):
+            melhorScore = erro_validacao[cont]
+            melhorRede = cont
+
+    print("Resultado das redes:\nA melhor rede é a " + str(melhorRede) + " com pontuacao de " + str(melhorScore))
+    print("A pior rede é a " + str(piorRede) +" com pontuacao de " + str(piorScore))
+
+    gera_arquivo_model(redes[melhorRede], isMelhor=True)
+    gera_arquivo_model(redes[piorRede], isMelhor=False)
+
 
     # TESTA A REDE: com a partição de testes
     print("Testando a rede com  a particao de testes...")
 
     # score returns the mean accuracy on the given test data and labels.
-    acuracia = rede.score(teste_entrada, teste_saida)
+    acuracia = redes[melhorRede].score(teste_entrada, teste_saida)
     print ("Acuracia de: ", acuracia)
 
     # imprime erro de validação
     print ("Erro de validacao eh: ", erro_validacao)
 
     # confusion_matrix Returns the Confusion matrix: entrada(predito, experado)
-    matriz_confusao = confusion_matrix(teste_saida, rede.predict(teste_entrada))
+    matriz_confusao = confusion_matrix(teste_saida, redes[melhorRede].predict(teste_entrada))
     letras = geraArrayLetras()
     classeLetra = []
     for letraLab in letras:
         classeLetra.append(letraLab.letra)
-    print classeLetra
+    print (classeLetra)
 
     plot_confusion_matrix(matriz_confusao, classes=classeLetra, normalize=False, title="Matriz de confusao")
     plot_confusion_matrix(matriz_confusao, classes=classeLetra, normalize=True, title="Matriz de confusao normalizada")
-
 
 
     # gera arquivo config.txt
@@ -359,6 +381,14 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
     # retorna
     return
 
+
+def gera_arquivo_model(rede, isMelhor):
+    matrizPesos = numpy.asarray(rede.coefs_)
+    if (isMelhor == True):
+        pickle.dump(matrizPesos, open(pasta_origem + "modelMelhor.dat", "wb"))
+    else:
+        pickle.dump(matrizPesos, open(pasta_origem + "modelPior.dat", "wb"))
+    print("- salva model.dat")
 
 # plota a matriz de confusão
 # retirado de: http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html
