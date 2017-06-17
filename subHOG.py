@@ -40,7 +40,7 @@ max_iter = 1000
 shuffle = True
 random_state = 20
 tol = 0.0001
-verbose = True
+verbose = False
 warm_start = False
 momentum = 0.9
 nesterovs_momentum = False
@@ -243,9 +243,6 @@ def leitorDescritor():
 
 # metodo para rodar a rede
 def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
-    errortxt = []
-    configtxt = []
-
     redes = []
 
     for cont in range(0, 5):
@@ -253,14 +250,6 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
                          power_t, max_iter, shuffle, random_state, tol, verbose, warm_start, momentum,
                          nesterovs_momentum, early_stopping, validation_fraction, beta_1, beta_2, epsilon))
 
-    #rede = MLPClassifier(hidden_layer_sizes, activation, solver, alpha, batch_size, learning_rate, learning_rate_init,
-    #                     power_t, max_iter, shuffle, random_state, tol, verbose, warm_start, momentum,
-    #                     nesterovs_momentum, early_stopping, validation_fraction, beta_1, beta_2, epsilon)
-
-    print("Tamanho da lista de Treinamento: " + str(len(treino_entrada)))
-    print("Tamanho da lista de saida_treino: " + str(len(treino_saida)))
-    print("Tamanho da lista de Teste: " + str(len(teste_entrada)))
-    print("Tamanho da lista de saida_teste: " + str(len(teste_saida)))
 
     # corrige dimensao do array de treinamento
     treino_entrada = numpy.array(treino_entrada)
@@ -277,15 +266,16 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
     # TREINA A REDE: kfold com 5 épocas
     k_fold = KFold(n_splits=5, random_state=None, shuffle=True)
     epoca = 0
-    erro_treinamento = []
     erro_validacao = []
-    teste = []
+    lista_acuracia = []
+    erro_treinamento = []
 
     for idTreino, idTeste in k_fold.split(treino_entrada):
         print(" -> rodando epoca: ", epoca)
 
         # seleciona datasets unicos para treinar e testar
-        entrada_treino = entrada_teste = []
+        entrada_treino = []
+        entrada_teste = []
         entrada_treino, entrada_teste = treino_entrada[idTreino], treino_entrada[idTeste]
         resposta_treino, resposta_teste = treino_saida[idTreino], treino_saida[idTeste]
 
@@ -299,6 +289,10 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
         # prediz a rede: gera o erro de validação
         erro_validacao.append(redes[epoca].score(entrada_teste, resposta_teste))
 
+        # armazena acuracia e erro de treinamento
+        lista_acuracia.append(redes[epoca].score(teste_entrada, teste_saida))
+        erro_treinamento.append(redes[epoca].loss_)
+
         # atualiza epoca
         epoca = epoca + 1
 
@@ -308,7 +302,7 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
     melhorRede = 0
     piorRede = 0
 
-    for cont in range(0,4):
+    for cont in range(0,5):
         if(erro_validacao[cont] < piorScore):
             piorScore = erro_validacao[cont]
             piorRede = cont
@@ -319,33 +313,74 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
     print("Resultado das redes:\nA melhor rede é a " + str(melhorRede) + " com pontuacao de " + str(melhorScore))
     print("A pior rede é a " + str(piorRede) +" com pontuacao de " + str(piorScore))
 
-    gera_arquivo_model(redes[melhorRede], isMelhor=True)
-    gera_arquivo_model(redes[piorRede], isMelhor=False)
-
 
     # TESTA A REDE: com a partição de testes
-    print("Testando a rede com  a particao de testes...")
+    print("\nTestando a rede com  a particao de testes...")
 
-    # score returns the mean accuracy on the given test data and labels.
-    acuracia = redes[melhorRede].score(teste_entrada, teste_saida)
-    print ("Acuracia de: ", acuracia)
+
+    print ("Acuracia da melhor rede: ", lista_acuracia[melhorRede])
+    print ("Acuracia da pior rede: ", lista_acuracia[piorRede])
+
+
+    # gera artefatos
+    gera_arquivo_model(redes[melhorRede], isMelhor=True)
+    gera_arquivo_model(redes[piorRede], isMelhor=False)
+    gera_arquivo_config()
+    gera_arquiv_relatorio(lista_acuracia, erro_treinamento, erro_validacao)
+
+
 
     # imprime erro de validação
-    print ("Erro de validacao eh: ", erro_validacao)
+    print ("Erro de validacao da melhor rede eh: ", erro_validacao[melhorRede])
+    print ("Erro de validacao da pior rede eh: ", erro_validacao[piorRede])
 
-    # confusion_matrix Returns the Confusion matrix: entrada(predito, experado)
+
+    # matriz de confusão para o melhor caso
     matriz_confusao = confusion_matrix(teste_saida, redes[melhorRede].predict(teste_entrada))
-    letras = geraArrayLetras()
-    classeLetra = []
-    for letraLab in letras:
-        classeLetra.append(letraLab.letra)
-    print (classeLetra)
+    plot_confusion_matrix(matriz_confusao, normalize=False, isMelhor=True)
+    plot_confusion_matrix(matriz_confusao, normalize=True, isMelhor=True)
 
-    plot_confusion_matrix(matriz_confusao, classes=classeLetra, normalize=False, title="Matriz de confusao")
-    plot_confusion_matrix(matriz_confusao, classes=classeLetra, normalize=True, title="Matriz de confusao normalizada")
+    # matriz de confusão para o pior caso
+    matriz_confusao = confusion_matrix(teste_saida, redes[piorRede].predict(teste_entrada))
+    plot_confusion_matrix(matriz_confusao, normalize=False, isMelhor=False)
+    plot_confusion_matrix(matriz_confusao, normalize=True, isMelhor=False)
+
+    # retorna
+    return
 
 
-    # gera arquivo config.txt
+
+# gera arquivo model.dat
+def gera_arquivo_model(rede, isMelhor):
+    matriz0 = numpy.zeros((rede.hidden_layer_sizes, 577))
+    matriz1 = numpy.zeros((rede.n_outputs_, (rede.hidden_layer_sizes + 1)))
+
+    for cont in range(0, rede.hidden_layer_sizes):
+        matriz0[cont][0] = rede.intercepts_[0][cont]
+
+    for x in range(0, rede.hidden_layer_sizes):
+        for y in range (1, 577):
+            matriz0[x][y] = rede.coefs_[0][y-1][x]
+
+    for cont in range(0, rede.n_outputs_):
+        matriz1[cont][0] = rede.intercepts_[1][cont]
+
+    for x in range(0, rede.n_outputs_):
+        for y in range (1, rede.hidden_layer_sizes + 1):
+            matriz1[x][y] = rede.coefs_[1][y-1][x]
+
+    if (isMelhor == True):
+        nomeArquivo = "modelMelhor.dat"
+    else:
+        nomeArquivo = "modelPior.dat"
+
+    pickle.dump((matriz0, matriz1), open(pasta_origem + nomeArquivo, "wb"))
+    print("- salva model.dat")
+
+
+# gera arquivo config.txt
+def gera_arquivo_config ():
+
     configtxtdata = ("Execucao em " + time.strftime("%d/%m/%Y") + " " + time.strftime("%H:%M"))
 
     # os parametros do descritor
@@ -378,61 +413,86 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
     myfile.close()
     print ("- salva config.txt")
 
-    # retorna
     return
 
 
-def gera_arquivo_model(rede, isMelhor):
-    matriz0 = numpy.zeros((rede.hidden_layer_sizes, 577))
-    matriz1 = numpy.zeros((rede.n_outputs_, (rede.hidden_layer_sizes + 1)))
-    matrizPesos = numpy.asarray(rede.coefs_)
+# gera txts para relatorio
+def gera_arquiv_relatorio(lista_acuracia, erro_treinamento, erro_validacao):
 
-    for cont in range(0, rede.hidden_layer_sizes):
-        matriz0[cont][0] = rede.intercepts_[0][cont]
+    # salva erro treinamento
+    try:
+        os.remove(pasta_origem + "erro_treinamento.txt")
+    except OSError:
+        pass
+    with codecs.open(pasta_origem + "erro_treinamento.txt", "a", "utf-8") as myfile:
+        for cont in range(0, 5):
+            myfile.write(str(erro_treinamento[cont]) + "\n")
+    myfile.close()
+    print ("- salva erro_treinamento.txt")
 
-    for x in range(0, rede.hidden_layer_sizes):
-        for y in range (1, 577):
-            matriz0[x][y] = rede.coefs_[0][y-1][x]
 
-    for cont in range(0, rede.n_outputs_):
-        matriz1[cont][0] = rede.intercepts_[1][cont]
+    # salva acuracia media
+    try:
+        os.remove(pasta_origem + "lista_acuracia.txt")
+    except OSError:
+        pass
+    with codecs.open(pasta_origem + "lista_acuracia.txt", "a", "utf-8") as myfile:
+        for cont in range(0,5):
+            myfile.write(str(lista_acuracia[cont])  + "\n")
+    myfile.close()
+    print ("- salva lista_acuracia.txt")
 
-    for x in range(0, rede.n_outputs_):
-        for y in range (1, rede.hidden_layer_sizes + 1):
-            matriz1[x][y] = rede.coefs_[1][y-1][x]
 
-    if (isMelhor == True):
-        nomeArquivo = "modelMelhor.dat"
-    else:
-        nomeArquivo = "modelPior.dat"
+    # salva erro validação
+    try:
+        os.remove(pasta_origem + "erro_validacao.txt")
+    except OSError:
+        pass
+    with codecs.open(pasta_origem + "erro_validacao.txt", "a", "utf-8") as myfile:
+        for cont in range(0,5):
+            myfile.write(str(erro_validacao[cont])  + "\n")
+    myfile.close()
+    print ("- salva erro_validacao.txt")
+    return
 
-    pickle.dump((matriz0, matriz1), open(pasta_origem + nomeArquivo, "wb"))
-    print("- salva model.dat")
 
 # plota a matriz de confusão
 # retirado de: http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html
-def plot_confusion_matrix(cm, classes, normalize, title, cmap=plt.cm.Blues):
+def plot_confusion_matrix(cm, normalize, isMelhor, cmap=plt.cm.Blues):
     """
     This function prints and plots the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
     """
+    letras = geraArrayLetras()
+    classes = []
+    for letraLab in letras:
+        classes.append(letraLab.letra)
+
+    if (isMelhor == True):
+        extra = "[MELHOR CASO]"
+    else:
+        extra = "[PIOR CASO]"
+        cmap = plt.cm.Oranges
+
     fig = plt.figure()
     plt.imshow(cm, interpolation='nearest', cmap=cmap)
-    plt.title(title)
+
+    titulo = "Matriz de confusao normalizada"
+    if (normalize ==  False):
+        titulo = "Matriz de confusao"
+
+    plt.title(titulo)
     plt.colorbar()
     tick_marks = numpy.arange(len(classes))
-    plt.xticks(tick_marks, classes, rotation=45)
+    plt.xticks(tick_marks, classes)
     plt.yticks(tick_marks, classes)
+    plt.subplots_adjust(bottom=0.15)
 
     if normalize:
-        cm = cm.astype('float') / cm.sum(axis=1)[:, numpy.newaxis]
-        nomeArquivo = 'matriz_confusao_normalizada.png'
-        print("Matriz de confusão normalizada")
+        cm = cm.astype("float") / cm.sum(axis=1)[:, numpy.newaxis]
+        nomeArquivo = "matriz_confusao_normalizada"+extra+".png"
     else:
-        nomeArquivo = 'matriz_confusao.png'
-        print('Matriz de confusão sem normalização')
-
-    print(cm)
+        nomeArquivo = "matriz_confusao"+extra+".png"
 
     thresh = cm.max() / 2.
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
@@ -440,10 +500,12 @@ def plot_confusion_matrix(cm, classes, normalize, title, cmap=plt.cm.Blues):
                  horizontalalignment="center",
                  color="white" if cm[i, j] > thresh else "black")
 
-    plt.tight_layout()
-    plt.ylabel('Classe real')
-    plt.xlabel('Classe prevista')
+
+    #plt.tight_layout()
+    plt.ylabel("Classe esperada")
+    plt.xlabel("Classe prevista")
     fig.savefig(pasta_origem + nomeArquivo)
+
 
 
 rodaTudo()
