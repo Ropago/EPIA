@@ -334,16 +334,7 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
     print ("Erro de validacao da melhor rede eh: ", erro_validacao[melhorRede])
     print ("Erro de validacao da pior rede eh: ", erro_validacao[piorRede])
 
-
-    # matriz de confusão para o melhor caso
-    matriz_confusao = confusion_matrix(teste_saida, redes[melhorRede].predict(teste_entrada))
-    plot_confusion_matrix(matriz_confusao, normalize=False, isMelhor=True)
-    plot_confusion_matrix(matriz_confusao, normalize=True, isMelhor=True)
-
-    # matriz de confusão para o pior caso
-    matriz_confusao = confusion_matrix(teste_saida, redes[piorRede].predict(teste_entrada))
-    plot_confusion_matrix(matriz_confusao, normalize=False, isMelhor=False)
-    plot_confusion_matrix(matriz_confusao, normalize=True, isMelhor=False)
+    geraGraficos(redes[melhorRede], redes[piorRede], teste_saida, teste_entrada)
 
     # retorna
     return
@@ -456,17 +447,61 @@ def gera_arquiv_relatorio(lista_acuracia, erro_treinamento, erro_validacao):
     return
 
 
-# plota a matriz de confusão
-# retirado de: http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html
-def plot_confusion_matrix(cm, normalize, isMelhor, cmap=plt.cm.Blues):
-    """
-    This function prints and plots the confusion matrix.
-    Normalization can be applied by setting `normalize=True`.
-    """
+def geraGraficos(melhorRede, piorRede, teste_saida, teste_entrada):
     letras = geraArrayLetras()
     classes = []
     for letraLab in letras:
         classes.append(letraLab.letra)
+
+    # matriz de confusão para o melhor caso
+    matriz_confusao = confusion_matrix(teste_saida, melhorRede.predict(teste_entrada))
+    plot_confusion_matrix(matriz_confusao, normalize=False, classes=classes, isMelhor=True)
+    plot_confusion_matrix(matriz_confusao, normalize=True, classes=classes, isMelhor=True)
+
+    # matriz de confusão para o pior caso
+    matriz_confusao = confusion_matrix(teste_saida, piorRede.predict(teste_entrada))
+    plot_confusion_matrix(matriz_confusao, normalize=False, classes=classes, isMelhor=False)
+    plot_confusion_matrix(matriz_confusao, normalize=True, classes=classes, isMelhor=False)
+
+
+    # salva curva de aprendizado MELHOR
+    try:
+        os.remove(pasta_origem + "curva_aprendizado[MELHOR].txt")
+    except OSError:
+        pass
+
+    curva_aprendizado = melhorRede.loss_curve_
+    with codecs.open(pasta_origem + "curva_aprendizado[MELHOR].txt", "a", "utf-8") as myfile:
+        for cada in curva_aprendizado:
+            myfile.write(str(cada) + "\n")
+    myfile.close()
+    print ("- salva curva_aprendizado[MELHOR].txt")
+
+    # salva curva de aprendizado PIOR
+    try:
+        os.remove(pasta_origem + "curva_aprendizado[PIOR].txt")
+    except OSError:
+        pass
+
+    curva_aprendizado = piorRede.loss_curve_
+    with codecs.open(pasta_origem + "curva_aprendizado[PIOR].txt", "a", "utf-8") as myfile:
+        for cada in curva_aprendizado:
+            myfile.write(str(cada) + "\n")
+    myfile.close()
+    print ("- salva curva_aprendizado[PIOR].txt")
+
+
+
+    return
+
+
+# plota a matriz de confusão
+# retirado de: http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html
+def plot_confusion_matrix(cm, normalize, classes, isMelhor, cmap=plt.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
 
     if (isMelhor == True):
         extra = "[MELHOR CASO]"
@@ -505,7 +540,7 @@ def plot_confusion_matrix(cm, normalize, isMelhor, cmap=plt.cm.Blues):
     plt.ylabel("Classe esperada")
     plt.xlabel("Classe prevista")
     fig.savefig(pasta_origem + nomeArquivo)
-
+    return
 
 
 rodaTudo()

@@ -22,7 +22,7 @@ method = 'uniform'
 
 # configurações da rede
 # MLPClassifier: configurações da rede
-hidden_layer_sizes = (18)
+hidden_layer_sizes = (20)
 activation = 'logistic'  # sigmoid
 solver = 'sgd'
 alpha = 1e-5
@@ -334,16 +334,7 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
     print ("Erro de validacao da melhor rede eh: ", erro_validacao[melhorRede])
     print ("Erro de validacao da pior rede eh: ", erro_validacao[piorRede])
 
-
-    # matriz de confusão para o melhor caso
-    matriz_confusao = confusion_matrix(teste_saida, redes[melhorRede].predict(teste_entrada))
-    plot_confusion_matrix(matriz_confusao, normalize=False, isMelhor=True)
-    plot_confusion_matrix(matriz_confusao, normalize=True, isMelhor=True)
-
-    # matriz de confusão para o pior caso
-    matriz_confusao = confusion_matrix(teste_saida, redes[piorRede].predict(teste_entrada))
-    plot_confusion_matrix(matriz_confusao, normalize=False, isMelhor=False)
-    plot_confusion_matrix(matriz_confusao, normalize=True, isMelhor=False)
+    geraGraficos(redes[melhorRede], redes[piorRede], teste_saida, teste_entrada)
 
     # retorna
     return
@@ -352,30 +343,20 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
 
 # gera arquivo model.dat
 def gera_arquivo_model(rede, isMelhor):
-    matriz0 = numpy.zeros((rede.hidden_layer_sizes, 577))
-    matriz1 = numpy.zeros((rede.n_outputs_, (rede.hidden_layer_sizes + 1)))
 
-    for cont in range(0, rede.hidden_layer_sizes):
-        matriz0[cont][0] = rede.intercepts_[0][cont]
-
-    for x in range(0, rede.hidden_layer_sizes):
-        for y in range (1, 577):
-            matriz0[x][y] = rede.coefs_[0][y-1][x]
-
-    for cont in range(0, rede.n_outputs_):
-        matriz1[cont][0] = rede.intercepts_[1][cont]
-
-    for x in range(0, rede.n_outputs_):
-        for y in range (1, rede.hidden_layer_sizes + 1):
-            matriz1[x][y] = rede.coefs_[1][y-1][x]
 
     if (isMelhor == True):
         nomeArquivo = "modelMelhor.dat"
     else:
         nomeArquivo = "modelPior.dat"
 
-    pickle.dump((matriz0, matriz1), open(pasta_origem + nomeArquivo, "wb"))
+    pickle.dump(rede.coefs_, open(pasta_origem + nomeArquivo, "wb"))
     print("- salva model.dat")
+    print numpy.array(rede.intercepts_).size
+    print numpy.array(rede.coefs_).size
+
+    return
+
 
 
 # gera arquivo config.txt
@@ -384,11 +365,7 @@ def gera_arquivo_config ():
     configtxtdata = ("Execucao em " + time.strftime("%d/%m/%Y") + " " + time.strftime("%H:%M"))
 
     # os parametros do descritor
-    confighog = ("\n\nHOG (descritor) \nwinSize: %s \nblockSize: %s \nblockStride: %s \ncellSize: %s \nnbins: %s \n"
-                 "derivAperture: %s \nwinSigma: %s \nhistogramNormType: %s \nL2HysThreshold: %s \ngammaCorrection: %s \n"
-                 "nlevels: %s" % (winSize, blockSize, blockStride, cellSize, nbins, derivAperture, winSigma,
-                                  histogramNormType, L2HysThreshold, gammaCorrection, nlevels))
-
+    configlbp = ("\n\nLBP (descritor) \nnum_points: %s \nradius: %s \nmethod: %s" % (n_points, radius, method))
 
     # os parametros da rede
     configrede = (
@@ -408,7 +385,7 @@ def gera_arquivo_config ():
 
     with codecs.open(pasta_origem + "config.txt", "a", "utf-8") as myfile:
         myfile.write(configtxtdata)
-        myfile.write(confighog)
+        myfile.write(configlbp)
         myfile.write(configrede)
     myfile.close()
     print ("- salva config.txt")
@@ -456,17 +433,61 @@ def gera_arquiv_relatorio(lista_acuracia, erro_treinamento, erro_validacao):
     return
 
 
-# plota a matriz de confusão
-# retirado de: http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html
-def plot_confusion_matrix(cm, normalize, isMelhor, cmap=plt.cm.Blues):
-    """
-    This function prints and plots the confusion matrix.
-    Normalization can be applied by setting `normalize=True`.
-    """
+def geraGraficos(melhorRede, piorRede, teste_saida, teste_entrada):
     letras = geraArrayLetras()
     classes = []
     for letraLab in letras:
         classes.append(letraLab.letra)
+
+    # matriz de confusão para o melhor caso
+    matriz_confusao = confusion_matrix(teste_saida, melhorRede.predict(teste_entrada))
+    plot_confusion_matrix(matriz_confusao, normalize=False, classes=classes, isMelhor=True)
+    plot_confusion_matrix(matriz_confusao, normalize=True, classes=classes, isMelhor=True)
+
+    # matriz de confusão para o pior caso
+    matriz_confusao = confusion_matrix(teste_saida, piorRede.predict(teste_entrada))
+    plot_confusion_matrix(matriz_confusao, normalize=False, classes=classes, isMelhor=False)
+    plot_confusion_matrix(matriz_confusao, normalize=True, classes=classes, isMelhor=False)
+
+
+    # salva curva de aprendizado MELHOR
+    try:
+        os.remove(pasta_origem + "curva_aprendizado[MELHOR].txt")
+    except OSError:
+        pass
+
+    curva_aprendizado = melhorRede.loss_curve_
+    with codecs.open(pasta_origem + "curva_aprendizado[MELHOR].txt", "a", "utf-8") as myfile:
+        for cada in curva_aprendizado:
+            myfile.write(str(cada) + "\n")
+    myfile.close()
+    print ("- salva curva_aprendizado[MELHOR].txt")
+
+    # salva curva de aprendizado PIOR
+    try:
+        os.remove(pasta_origem + "curva_aprendizado[PIOR].txt")
+    except OSError:
+        pass
+
+    curva_aprendizado = piorRede.loss_curve_
+    with codecs.open(pasta_origem + "curva_aprendizado[PIOR].txt", "a", "utf-8") as myfile:
+        for cada in curva_aprendizado:
+            myfile.write(str(cada) + "\n")
+    myfile.close()
+    print ("- salva curva_aprendizado[PIOR].txt")
+
+
+
+    return
+
+
+# plota a matriz de confusão
+# retirado de: http://scikit-learn.org/stable/auto_examples/model_selection/plot_confusion_matrix.html
+def plot_confusion_matrix(cm, normalize, classes, isMelhor, cmap=plt.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
 
     if (isMelhor == True):
         extra = "[MELHOR CASO]"
@@ -505,6 +526,7 @@ def plot_confusion_matrix(cm, normalize, isMelhor, cmap=plt.cm.Blues):
     plt.ylabel("Classe esperada")
     plt.xlabel("Classe prevista")
     fig.savefig(pasta_origem + nomeArquivo)
+    return
 
 
 
