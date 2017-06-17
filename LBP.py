@@ -16,13 +16,13 @@ import itertools
 
 
 # configurações do descritor
-n_points = 24
 radius = 3
+n_points = 8 * radius
 method = 'uniform'
 
 # configurações da rede
 # MLPClassifier: configurações da rede
-hidden_layer_sizes = (20)
+hidden_layer_sizes = (18)
 activation = 'logistic'  # sigmoid
 solver = 'sgd'
 alpha = 1e-5
@@ -38,7 +38,7 @@ verbose = True
 warm_start = False
 momentum = 0.9
 nesterovs_momentum = False
-early_stopping = False
+early_stopping = True
 validation_fraction = 0.1
 beta_1 = 0.9
 beta_2 = 0.999
@@ -51,7 +51,7 @@ pasta_origem = "descritores\\lbp\\"
 def rodaTudo():
 
     # gera os descritores
-    #'''
+    '''
     print("\nComeçando a leitura descritor")
     horario_inicio = datetime.now()
     treino_entrada, teste_entrada = geraDescritor()
@@ -65,7 +65,7 @@ def rodaTudo():
     with open(pasta_origem + "tempo_descrever_imagens.txt", "a") as myfile:
         myfile.write(tempo_descrever_imagens)
     myfile.close()
-    #'''
+    '''
 
 
     # le o descritor gerado
@@ -98,9 +98,7 @@ def geraArrayLetras():
 
     labelC = LabelLetra("C", "43")
     letras.append(labelC)
-
-    return letras
-'''
+    '''
     labelD = LabelLetra("D", "44")
     letras.append(labelD)
 
@@ -169,20 +167,16 @@ def geraArrayLetras():
 
     labelZ = LabelLetra("Z", "5a")
     letras.append(labelZ)
-'''
-
+    '''
+    return letras
 
 
 # metodo para calcular o descritor LBP
 def calculaDescritor(imagem):
-    lbp = local_binary_pattern(imagem, n_points, radius, 'uniform')
+    lbp = local_binary_pattern(imagem, n_points, radius, method)
 
-
-    (hist, _) = numpy.histogram(lbp.ravel(),
-                             bins=numpy.arange(0, n_points + 3),
+    (hist, _) = numpy.histogram(lbp.ravel(), bins=numpy.arange(0, n_points + 3),
                              range=(0, n_points + 2))
-
-
     # normaliza o histograma
     hist = hist.astype("float")
     hist /= (hist.sum() + 1e-7)
@@ -205,10 +199,6 @@ def geraDescritor():
             entrada_treino.append(calculaDescritor(imagem))
 
         print("Salvando Treinamento " + letraLab.letra + ", tamanho:" + str(len(entrada_treino)))
-        file = open("testeLBP.txt", "a")
-        for entrada in entrada_treino:
-            file.write(str(entrada))
-        file.close()
         numpy.save(pasta_origem + "Treinamentos_" + letraLab.letra, entrada_treino)
 
         del entrada_treino[:]
@@ -281,9 +271,10 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
     print("Iniciando Treinamento da rede...")
 
     # TREINA A REDE: kfold com 5 épocas
-    k_fold = KFold(n_splits=5, random_state=None, shuffle=True)
+    k_fold = KFold(n_splits=5, random_state=None, shuffle=False)
     epoca = 0
-    erro_treinamento = erro_validacao = []
+    erro_treinamento = []
+    erro_validacao = []
 
     for idTreino, idTeste in k_fold.split(treino_entrada):
         print(" -> rodando epoca: ", epoca)
@@ -324,7 +315,7 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
     classeLetra = []
     for letraLab in letras:
         classeLetra.append(letraLab.letra)
-    print (classeLetra)
+    print classeLetra
 
 
     plot_confusion_matrix(matriz_confusao, classes=classeLetra, normalize=False, title="Matriz de confusao")
