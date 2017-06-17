@@ -22,7 +22,7 @@ method = 'uniform'
 
 # configurações da rede
 # MLPClassifier: configurações da rede
-hidden_layer_sizes = (400)
+hidden_layer_sizes = (20)
 activation = 'logistic'  # sigmoid
 solver = 'sgd'
 alpha = 1e-5
@@ -38,7 +38,7 @@ verbose = True
 warm_start = False
 momentum = 0.9
 nesterovs_momentum = False
-early_stopping = True
+early_stopping = False
 validation_fraction = 0.1
 beta_1 = 0.9
 beta_2 = 0.999
@@ -99,6 +99,8 @@ def geraArrayLetras():
     labelC = LabelLetra("C", "43")
     letras.append(labelC)
 
+    return letras
+'''
     labelD = LabelLetra("D", "44")
     letras.append(labelD)
 
@@ -167,8 +169,8 @@ def geraArrayLetras():
 
     labelZ = LabelLetra("Z", "5a")
     letras.append(labelZ)
+'''
 
-    return letras
 
 
 # metodo para calcular o descritor LBP
@@ -203,6 +205,10 @@ def geraDescritor():
             entrada_treino.append(calculaDescritor(imagem))
 
         print("Salvando Treinamento " + letraLab.letra + ", tamanho:" + str(len(entrada_treino)))
+        file = open("testeLBP.txt", "a")
+        for entrada in entrada_treino:
+            file.write(str(entrada))
+        file.close()
         numpy.save(pasta_origem + "Treinamentos_" + letraLab.letra, entrada_treino)
 
         del entrada_treino[:]
@@ -318,7 +324,7 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
     classeLetra = []
     for letraLab in letras:
         classeLetra.append(letraLab.letra)
-    print classeLetra
+    print (classeLetra)
 
 
     plot_confusion_matrix(matriz_confusao, classes=classeLetra, normalize=False, title="Matriz de confusao")

@@ -383,11 +383,30 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
 
 
 def gera_arquivo_model(rede, isMelhor):
+    matriz0 = numpy.zeros((rede.hidden_layer_sizes, 577))
+    matriz1 = numpy.zeros((rede.n_outputs_, (rede.hidden_layer_sizes + 1)))
     matrizPesos = numpy.asarray(rede.coefs_)
+
+    for cont in range(0, rede.hidden_layer_sizes):
+        matriz0[cont][0] = rede.intercepts_[0][cont]
+
+    for x in range(0, rede.hidden_layer_sizes):
+        for y in range (1, 577):
+            matriz0[x][y] = rede.coefs_[0][y-1][x]
+
+    for cont in range(0, rede.n_outputs_):
+        matriz1[cont][0] = rede.intercepts_[1][cont]
+
+    for x in range(0, rede.n_outputs_):
+        for y in range (1, rede.hidden_layer_sizes + 1):
+            matriz1[x][y] = rede.coefs_[1][y-1][x]
+
     if (isMelhor == True):
-        pickle.dump(matrizPesos, open(pasta_origem + "modelMelhor.dat", "wb"))
+        nomeArquivo = "modelMelhor.dat"
     else:
-        pickle.dump(matrizPesos, open(pasta_origem + "modelPior.dat", "wb"))
+        nomeArquivo = "modelPior.dat"
+
+    pickle.dump((matriz0, matriz1), open(pasta_origem + nomeArquivo, "wb"))
     print("- salva model.dat")
 
 # plota a matriz de confusão

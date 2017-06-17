@@ -1,4 +1,4 @@
-Execucao em 16/06/2017 18:14
+Execucao em 16/06/2017 22:18
 
 HOG (descritor) 
 winSize: (128, 128) 

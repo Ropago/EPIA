@@ -1,4 +1,4 @@
-Execucao em 15/06/2017 23:38
+Execucao em 16/06/2017 20:44
 
 LBP (descritor) 
 num_points: 24 
@@ -6,7 +6,7 @@ radius: 3
 method: uniform
 
 MLPClassifier (rede)
-hidden_layer_sizes : 400
+hidden_layer_sizes : 20
 activation : logistic
 solver : sgd
 alpha : 1e-05
@@ -22,7 +22,7 @@ verbose : True
 warm_start : False
 momentum : 0.9
 nesterovs_momentum : False
-early_stopping : True
+early_stopping : False
 validation_fraction : 0.1
 beta_1 : 0.9
 beta_2 : 0.999
