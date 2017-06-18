@@ -22,6 +22,7 @@ method = 'uniform'
 
 # configurações da rede
 # MLPClassifier: configurações da rede
+global hidden_layer_sizes
 hidden_layer_sizes = (20)
 activation = 'logistic'  # sigmoid
 solver = 'sgd'
@@ -47,10 +48,11 @@ epsilon = 1e-08
 # configurações da pasta principal
 pasta_origem = "descritores\\lbp\\"
 
-
 def rodaTudo():
 
     # gera os descritores
+
+
     '''
     print("\nComeçando a leitura descritor")
     horario_inicio = datetime.now()
@@ -62,14 +64,23 @@ def rodaTudo():
     tempo_descrever_imagens = (
     "\nInicio em: " + horario_inicio.strftime('%d/%m/%Y %H:%M:%S') + "\nFim em: " + horario_fim.strftime(
         '%d/%m/%Y %H:%M:%S'))
-    with open(pasta_origem + "tempo_descrever_imagens.txt", "a") as myfile:
+    with open("descritores\\lbp\\" + "tempo_descrever_imagens.txt", "a") as myfile:
         myfile.write(tempo_descrever_imagens)
     myfile.close()
+
     '''
-
-
     # le o descritor gerado
     treino_entrada, teste_entrada, treino_saida, teste_saida = leitorDescritor()
+
+    global pasta_origem
+    # --------------------
+    # CAMADA ESCONDIDA : 20
+
+    pasta_origem = "descritores\\lbp\\20 camadas\\"
+
+    directory = os.path.dirname(pasta_origem)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
     # faz as operações na rede
     tempo_inicio = datetime.now()
@@ -82,6 +93,59 @@ def rodaTudo():
     with open(pasta_origem + "tempo_rede.txt", "a") as myfile:
         myfile.write(tempo_rede)
     myfile.close()
+
+    #'''
+    # ------------------
+    # CAMADA ESCONDIDA: 18
+    global hidden_layer_sizes
+    hidden_layer_sizes = 18
+
+    pasta_origem = "descritores\\lbp\\18 camadas\\"
+
+    directory = os.path.dirname(pasta_origem)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    # faz as operações na rede
+    tempo_inicio = datetime.now()
+    controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida)
+    tempo_fim = datetime.now()
+
+    # gera arquivo
+    tempo_rede = ("\nInicio em: " + tempo_inicio.strftime('%d/%m/%Y %H:%M:%S') + "\nFim em: " + tempo_fim.strftime(
+        '%d/%m/%Y %H:%M:%S'))
+    with open(pasta_origem + "tempo_rede.txt", "a") as myfile:
+        myfile.write(tempo_rede)
+    myfile.close()
+
+
+    # ------------------
+    # CAMADA ESCONDIDA: 22
+    
+    hidden_layer_sizes = 22
+
+    pasta_origem = "descritores\\lbp\\22 camadas\\"
+
+    directory = os.path.dirname(pasta_origem)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    # faz as operações na rede
+    tempo_inicio = datetime.now()
+    controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida)
+    tempo_fim = datetime.now()
+
+    # gera arquivo
+    tempo_rede = ("\nInicio em: " + tempo_inicio.strftime('%d/%m/%Y %H:%M:%S') + "\nFim em: " + tempo_fim.strftime(
+        '%d/%m/%Y %H:%M:%S'))
+    with open(pasta_origem + "tempo_rede.txt", "a") as myfile:
+        myfile.write(tempo_rede)
+    myfile.close()
+    
+    #'''
+
+
+
 
     return
 
@@ -98,7 +162,7 @@ def geraArrayLetras():
 
     labelC = LabelLetra("C", "43")
     letras.append(labelC)
-    '''
+
     labelD = LabelLetra("D", "44")
     letras.append(labelD)
 
@@ -167,7 +231,7 @@ def geraArrayLetras():
 
     labelZ = LabelLetra("Z", "5a")
     letras.append(labelZ)
-    '''
+
     return letras
 
 
@@ -199,7 +263,7 @@ def geraDescritor():
             entrada_treino.append(calculaDescritor(imagem))
 
         print("Salvando Treinamento " + letraLab.letra + ", tamanho:" + str(len(entrada_treino)))
-        numpy.save(pasta_origem + "Treinamentos_" + letraLab.letra, entrada_treino)
+        numpy.save("descritores\\lbp\\" + "Treinamentos_" + letraLab.letra, entrada_treino)
 
         del entrada_treino[:]
 
@@ -209,7 +273,7 @@ def geraDescritor():
             entrada_teste.append(calculaDescritor(imagem))
 
         print("Salvando Testes " + letraLab.letra + ", tamanho:" + str(len(entrada_teste)))
-        numpy.save(pasta_origem + "Testes_" + letraLab.letra, entrada_teste)
+        numpy.save("descritores\\lbp\\" + "Testes_" + letraLab.letra, entrada_teste)
 
         del entrada_teste[:]
 
@@ -227,13 +291,13 @@ def leitorDescritor():
     letras = geraArrayLetras()
 
     for letraLab in letras:
-        dados = numpy.load(pasta_origem + "Treinamentos_" + letraLab.letra + ".npy")
+        dados = numpy.load("descritores\\lbp\\" + "Treinamentos_" + letraLab.letra + ".npy")
         for ent in dados:
             entrada_treino.append(ent)
             saida_treino.extend(letraLab.letra)
 
     for letraLab in letras:
-        dados = numpy.load(pasta_origem + "Testes_" + letraLab.letra + ".npy")
+        dados = numpy.load("descritores\\lbp\\" + "Testes_" + letraLab.letra + ".npy")
         for ent in dados:
             entrada_teste.append(ent)
             saida_teste.extend(letraLab.letra)
@@ -287,7 +351,14 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
         redes[epoca].fit(entrada_treino, resposta_treino, pasta_origem + "error" + str(epoca) +".txt")
 
         # prediz a rede: gera o erro de validação
-        erro_validacao.append(redes[epoca].score(entrada_teste, resposta_teste))
+        valorErroValidacao = redes[epoca].score(entrada_teste, resposta_teste)
+
+        file = open(pasta_origem + "error" + str(epoca) + ".txt", "a")
+        file.write("%d;0;%.8f\n" % ((redes[epoca].n_iter_ + 1), valorErroValidacao))
+        file.close()
+
+        # prediz a rede: gera o erro de validação
+        erro_validacao.append(1 - valorErroValidacao)
 
         # armazena acuracia e erro de treinamento
         lista_acuracia.append(redes[epoca].score(teste_entrada, teste_saida))
@@ -343,20 +414,30 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
 
 # gera arquivo model.dat
 def gera_arquivo_model(rede, isMelhor):
+    matriz0 = numpy.zeros((rede.hidden_layer_sizes, 27))
+    matriz1 = numpy.zeros((rede.n_outputs_, (rede.hidden_layer_sizes + 1)))
 
+    for cont in range(0, rede.hidden_layer_sizes):
+        matriz0[cont][0] = rede.intercepts_[0][cont]
+
+    for x in range(0, rede.hidden_layer_sizes):
+        for y in range (1, 27):
+            matriz0[x][y] = rede.coefs_[0][y-1][x]
+
+    for cont in range(0, rede.n_outputs_):
+        matriz1[cont][0] = rede.intercepts_[1][cont]
+
+    for x in range(0, rede.n_outputs_):
+        for y in range (1, rede.hidden_layer_sizes + 1):
+            matriz1[x][y] = rede.coefs_[1][y-1][x]
 
     if (isMelhor == True):
         nomeArquivo = "modelMelhor.dat"
     else:
         nomeArquivo = "modelPior.dat"
 
-    pickle.dump(rede.coefs_, open(pasta_origem + nomeArquivo, "wb"))
+    pickle.dump((matriz0, matriz1), open(pasta_origem + nomeArquivo, "wb"))
     print("- salva model.dat")
-    print numpy.array(rede.intercepts_).size
-    print numpy.array(rede.coefs_).size
-
-    return
-
 
 
 # gera arquivo config.txt
@@ -442,12 +523,42 @@ def geraGraficos(melhorRede, piorRede, teste_saida, teste_entrada):
     # matriz de confusão para o melhor caso
     matriz_confusao = confusion_matrix(teste_saida, melhorRede.predict(teste_entrada))
     plot_confusion_matrix(matriz_confusao, normalize=False, classes=classes, isMelhor=True)
-    plot_confusion_matrix(matriz_confusao, normalize=True, classes=classes, isMelhor=True)
+    #plot_confusion_matrix(matriz_confusao, normalize=True, classes=classes, isMelhor=True)
+
+    # salva matriz confusao MELHOR
+    try:
+        os.remove(pasta_origem + "matriz_confusao[MELHOR].txt")
+    except OSError:
+        pass
+
+
+    with codecs.open(pasta_origem + "matriz_confusao[MELHOR].txt", "a", "utf-8") as myfile:
+        for linha in matriz_confusao:
+            for coluna in linha:
+                myfile.write(str(coluna) + ";")
+            myfile.write("\n")
+    myfile.close()
+    print ("- salva matriz_confusao[MELHOR].txt")
+
 
     # matriz de confusão para o pior caso
     matriz_confusao = confusion_matrix(teste_saida, piorRede.predict(teste_entrada))
     plot_confusion_matrix(matriz_confusao, normalize=False, classes=classes, isMelhor=False)
-    plot_confusion_matrix(matriz_confusao, normalize=True, classes=classes, isMelhor=False)
+    #plot_confusion_matrix(matriz_confusao, normalize=True, classes=classes, isMelhor=False)
+
+    # salva matriz confusao MELHOR
+    try:
+        os.remove(pasta_origem + "matriz_confusao[PIOR].txt")
+    except OSError:
+        pass
+
+    with codecs.open(pasta_origem + "matriz_confusao[PIOR].txt", "a", "utf-8") as myfile:
+        for linha in matriz_confusao:
+            for coluna in linha:
+                myfile.write(str(coluna) + ";")
+            myfile.write("\n")
+    myfile.close()
+    print ("- salva matriz_confusao[PIOR].txt")
 
 
     # salva curva de aprendizado MELHOR
@@ -476,8 +587,6 @@ def geraGraficos(melhorRede, piorRede, teste_saida, teste_entrada):
     myfile.close()
     print ("- salva curva_aprendizado[PIOR].txt")
 
-
-
     return
 
 
@@ -495,8 +604,11 @@ def plot_confusion_matrix(cm, normalize, classes, isMelhor, cmap=plt.cm.Blues):
         extra = "[PIOR CASO]"
         cmap = plt.cm.Oranges
 
-    fig = plt.figure()
-    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    fig = plt.figure(num=None, figsize=(8, 6), dpi=100)
+    ax = fig.add_subplot(111)
+
+    plt.imshow(cm, interpolation='nearest', cmap=cmap, aspect = 'auto')
+
 
     titulo = "Matriz de confusao normalizada"
     if (normalize ==  False):
@@ -509,6 +621,7 @@ def plot_confusion_matrix(cm, normalize, classes, isMelhor, cmap=plt.cm.Blues):
     plt.yticks(tick_marks, classes)
     plt.subplots_adjust(bottom=0.15)
 
+
     if normalize:
         cm = cm.astype("float") / cm.sum(axis=1)[:, numpy.newaxis]
         nomeArquivo = "matriz_confusao_normalizada"+extra+".png"
@@ -519,12 +632,12 @@ def plot_confusion_matrix(cm, normalize, classes, isMelhor, cmap=plt.cm.Blues):
     for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
         plt.text(j, i, cm[i, j],
                  horizontalalignment="center",
-                 color="white" if cm[i, j] > thresh else "black")
+                 color="white" if cm[i, j] > thresh else "black", linespacing= 2, verticalalignment= 'center').set_size('x-small')
 
 
     #plt.tight_layout()
     plt.ylabel("Classe esperada")
-    plt.xlabel("Classe prevista")
+    plt.xlabel("Classe prevista", labelpad=20)
     fig.savefig(pasta_origem + nomeArquivo)
     return
 
