@@ -28,7 +28,7 @@ nlevels = 64
 
 # configurações da rede
 # MLPClassifier: configurações da rede
-hidden_layer_sizes = (400)
+hidden_layer_sizes = (460)
 activation = 'logistic'  # sigmoid
 solver = 'sgd'
 alpha = 1e-5
@@ -40,7 +40,7 @@ max_iter = 1000
 shuffle = True
 random_state = 20
 tol = 0.0001
-verbose = False
+verbose = True
 warm_start = False
 momentum = 0.9
 nesterovs_momentum = False
@@ -55,9 +55,9 @@ pasta_origem = "descritores\\hog\\"
 
 
 def rodaTudo():
-    '''
-    # gera os descritores
 
+    # gera os descritores
+    '''
     print("\nComeçando a leitura descritor")
     horario_inicio = datetime.now()
     treino_entrada, teste_entrada = geraDescritor()
@@ -72,9 +72,20 @@ def rodaTudo():
         myfile.write(tempo_descrever_imagens)
     myfile.close()
 
-    '''
+    #'''
     # le o descritor gerado
     treino_entrada, teste_entrada, treino_saida, teste_saida = leitorDescritor()
+    global pasta_origem
+    global momentum
+
+    # --------------------
+    # CAMADA ESCONDIDA : 16
+    momentum = 0.9
+    pasta_origem = "descritores\\hog\\460 camadas_momentum 0.9 taxa 0.1\\"
+
+    directory = os.path.dirname(pasta_origem)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
 
     # faz as operações na rede
     tempo_inicio = datetime.now()
@@ -88,6 +99,28 @@ def rodaTudo():
         myfile.write(tempo_rede)
     myfile.close()
 
+    # --------------------
+    # CAMADA ESCONDIDA : 16
+    momentum = 0.2
+    pasta_origem = "descritores\\hog\\460 camadas_momentum 0.2 taxa 0.1\\"
+
+    directory = os.path.dirname(pasta_origem)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    # faz as operações na rede
+    tempo_inicio = datetime.now()
+    controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida)
+    tempo_fim = datetime.now()
+
+    # gera arquivo
+    tempo_rede = ("\nInicio em: " + tempo_inicio.strftime('%d/%m/%Y %H:%M:%S') + "\nFim em: " + tempo_fim.strftime(
+        '%d/%m/%Y %H:%M:%S'))
+    with open(pasta_origem + "tempo_rede.txt", "a") as myfile:
+        myfile.write(tempo_rede)
+    myfile.close()
+    
+    #'''
     return
 
 
@@ -200,7 +233,7 @@ def geraDescritor():
             entrada_treino.append(calculaDescritor(nomeArquivo))
 
         print("Salvando Treinamento " + letraLab.letra + ", tamanho:" + str(len(entrada_treino)))
-        numpy.save(pasta_origem + "Treinamentos_" + letraLab.letra, entrada_treino)
+        numpy.save("descritores\\lbp\\" + "Treinamentos_" + letraLab.letra, entrada_treino)
 
         del entrada_treino[:]
 
@@ -210,7 +243,7 @@ def geraDescritor():
             entrada_teste.append(calculaDescritor(nomeArquivo))
 
         print("Salvando Testes " + letraLab.letra + ", tamanho:" + str(len(entrada_teste)))
-        numpy.save(pasta_origem + "Testes_" + letraLab.letra, entrada_teste)
+        numpy.save("descritores\\lbp\\" + "Testes_" + letraLab.letra, entrada_teste)
 
         del entrada_teste[:]
 
@@ -227,13 +260,13 @@ def leitorDescritor():
     letras = geraArrayLetras()
 
     for letraLab in letras:
-        dados = numpy.load(pasta_origem + "Treinamentos_" + letraLab.letra + ".npy")
+        dados = numpy.load("descritores\\lbp\\" + "Treinamentos_" + letraLab.letra + ".npy")
         for ent in dados:
             entrada_treino.append(ent)
             saida_treino.extend(letraLab.letra)
 
     for letraLab in letras:
-        dados = numpy.load(pasta_origem + "Testes_" + letraLab.letra + ".npy")
+        dados = numpy.load("descritores\\lbp\\" + "Testes_" + letraLab.letra + ".npy")
         for ent in dados:
             entrada_teste.append(ent)
             saida_teste.extend(letraLab.letra)
@@ -294,7 +327,7 @@ def controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida):
         file.close()
 
         # prediz a rede: gera o erro de validação
-        erro_validacao.append(1 - valorErroValidacao)
+        erro_validacao.append(valorErroValidacao)
 
         # armazena acuracia e erro de treinamento
         lista_acuracia.append(redes[epoca].score(teste_entrada, teste_saida))
@@ -448,7 +481,7 @@ def gera_arquiv_relatorio(lista_acuracia, erro_treinamento, erro_validacao):
         pass
     with codecs.open(pasta_origem + "erro_validacao.txt", "a", "utf-8") as myfile:
         for cont in range(0,5):
-            myfile.write(str(erro_validacao[cont])  + "\n")
+            myfile.write(str(1 - erro_validacao[cont])  + "\n")
     myfile.close()
     print ("- salva erro_validacao.txt")
     return

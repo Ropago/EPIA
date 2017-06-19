@@ -1,0 +1,37 @@
+Execucao em 19/06/2017 03:25
+
+HOG (descritor) 
+winSize: (128, 128) 
+blockSize: (16, 16) 
+blockStride: (16, 16) 
+cellSize: (16, 16) 
+nbins: 9 
+derivAperture: 1 
+winSigma: -1 
+histogramNormType: 0 
+L2HysThreshold: 0.2 
+gammaCorrection: 1 
+nlevels: 64
+
+MLPClassifier (rede)
+hidden_layer_sizes : 460
+activation : logistic
+solver : sgd
+alpha : 1e-05
+batch_size : auto
+learning_rate : adaptive
+learning_rate_init : 0.1
+power_t : 0.5
+max_iter : 1000
+shuffle : True
+random_state : 20
+tol : 0.0001
+verbose : True
+warm_start : False
+momentum : 0.9
+nesterovs_momentum : False
+early_stopping : False
+validation_fraction : 0.1
+beta_1 : 0.9
+beta_2 : 0.999
+epsilon : 1e-08

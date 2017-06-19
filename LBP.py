@@ -22,7 +22,6 @@ method = 'uniform'
 
 # configurações da rede
 # MLPClassifier: configurações da rede
-global hidden_layer_sizes
 hidden_layer_sizes = (20)
 activation = 'logistic'  # sigmoid
 solver = 'sgd'
@@ -32,7 +31,7 @@ learning_rate = 'adaptive'
 learning_rate_init = 0.1
 power_t = 0.5
 max_iter = 1000
-shuffle = True
+shuffle = False
 random_state = 20
 tol = 0.0001
 verbose = True
@@ -73,10 +72,36 @@ def rodaTudo():
     treino_entrada, teste_entrada, treino_saida, teste_saida = leitorDescritor()
 
     global pasta_origem
+    global hidden_layer_sizes
+
+    # --------------------
+    # CAMADA ESCONDIDA : 16
+    hidden_layer_sizes = 16
+    pasta_origem = "descritores\\lbp\\16 camadas_Learning 0.01\\"
+
+    directory = os.path.dirname(pasta_origem)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    # faz as operações na rede
+    tempo_inicio = datetime.now()
+    controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida)
+    tempo_fim = datetime.now()
+
+    # gera arquivo
+    tempo_rede = ("\nInicio em: " + tempo_inicio.strftime('%d/%m/%Y %H:%M:%S') + "\nFim em: " + tempo_fim.strftime(
+        '%d/%m/%Y %H:%M:%S'))
+    with open(pasta_origem + "tempo_rede.txt", "a") as myfile:
+        myfile.write(tempo_rede)
+    myfile.close()
+
+
+
+
     # --------------------
     # CAMADA ESCONDIDA : 20
-
-    pasta_origem = "descritores\\lbp\\20 camadas\\"
+    hidden_layer_sizes = 20
+    pasta_origem = "descritores\\lbp\\20 camadas_Learning 0.01\\"
 
     directory = os.path.dirname(pasta_origem)
     if not os.path.exists(directory):
@@ -97,10 +122,9 @@ def rodaTudo():
     #'''
     # ------------------
     # CAMADA ESCONDIDA: 18
-    global hidden_layer_sizes
     hidden_layer_sizes = 18
 
-    pasta_origem = "descritores\\lbp\\18 camadas\\"
+    pasta_origem = "descritores\\lbp\\18 camadas_Learning 0.01\\"
 
     directory = os.path.dirname(pasta_origem)
     if not os.path.exists(directory):
@@ -119,23 +143,7 @@ def rodaTudo():
     myfile.close()
 
 
-    # ------------------
-    # CAMADA ESCONDIDA: 22
-    
-    hidden_layer_sizes = 22
-
-    pasta_origem = "descritores\\lbp\\22 camadas\\"
-
-    directory = os.path.dirname(pasta_origem)
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-
-    # faz as operações na rede
-    tempo_inicio = datetime.now()
-    controlaRede(treino_entrada, teste_entrada, treino_saida, teste_saida)
-    tempo_fim = datetime.now()
-
-    # gera arquivo
+ # gera arquivo
     tempo_rede = ("\nInicio em: " + tempo_inicio.strftime('%d/%m/%Y %H:%M:%S') + "\nFim em: " + tempo_fim.strftime(
         '%d/%m/%Y %H:%M:%S'))
     with open(pasta_origem + "tempo_rede.txt", "a") as myfile:
